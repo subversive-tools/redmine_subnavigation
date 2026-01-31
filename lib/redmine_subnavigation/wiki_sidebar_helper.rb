@@ -1,4 +1,4 @@
-module RedmineSubnav
+module RedmineSubnavigation
   module WikiSidebarHelper
     
     def render_sidebar_navigation(project, mode)

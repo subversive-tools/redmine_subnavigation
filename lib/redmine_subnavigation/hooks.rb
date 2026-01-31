@@ -1,11 +1,11 @@
-module RedmineSubnav
+module RedmineSubnavigation
   class Hooks < Redmine::Hook::ViewListener
-    include RedmineSubnav::WikiSidebarHelper
+    include RedmineSubnavigation::WikiSidebarHelper
 
     def view_layouts_base_html_head(context = {})
       # Insert CSS/JS
-      stylesheet_link_tag('wiki_sidebar', plugin: 'redmine_subnav') +
-      javascript_include_tag('wiki_sidebar', plugin: 'redmine_subnav')
+      stylesheet_link_tag('wiki_sidebar', plugin: 'redmine_subnavigation') +
+      javascript_include_tag('wiki_sidebar', plugin: 'redmine_subnavigation')
     end
 
     def view_layouts_base_body_bottom(context = {})
@@ -13,8 +13,8 @@ module RedmineSubnav
       return '' unless context[:project]
       
       # Check if plugin is enabled/configured (simple logic for now)
-      # We use Setting.plugin_redmine_subnav['sidebar_mode']
-      mode = Setting.plugin_redmine_subnav['sidebar_mode']
+      # We use Setting.plugin_redmine_subnavigation['sidebar_mode']
+      mode = Setting.plugin_redmine_subnavigation['sidebar_mode']
       return '' if mode.blank? || mode == 'none'
       
       # Ensure wiki module is enabled if we are in wiki mode

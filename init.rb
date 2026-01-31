@@ -1,9 +1,9 @@
-Redmine::Plugin.register :redmine_subnav do
-  name 'Redmine Subnav'
+Redmine::Plugin.register :redmine_subnavigation do
+  name 'Redmine Subnavigation'
   author 'Stefan Mischke'
-  description 'Adds a collapsible sidebar for Wiki navigation'
+  description 'Provides a comprehensive sidebar navigation tree for projects, subprojects, wiki pages, and wiki content headings.'
   version '1.0.0'
-  url 'https://github.com/modoq/redmine_subnav'
+  url 'https://github.com/modoq/redmine_subnavigation'
   author_url 'https://github.com/modoq'
 
   settings default: {
@@ -11,6 +11,6 @@ Redmine::Plugin.register :redmine_subnav do
   }, partial: 'settings/subnav_settings'
 end
 
-require_relative 'lib/redmine_subnav/hooks'
-require_relative 'lib/redmine_subnav/wiki_sidebar_helper'
+require_relative 'lib/redmine_subnavigation/hooks'
+require_relative 'lib/redmine_subnavigation/wiki_sidebar_helper'
 
