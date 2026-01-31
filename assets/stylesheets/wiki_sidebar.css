@@ -1,0 +1,436 @@
+/* Redmine Mini Wiki Sidebar - Clean Rewrite */
+
+/* GLOBAL HEIGHT FIXES */
+html,
+body {
+    height: 100%;
+}
+
+/* CSS GRID LAYOUT on #wrapper */
+/* CSS GRID LAYOUT on #wrapper */
+
+/* Base Grid Setup */
+body.has-mini-wiki-sidebar #wrapper {
+    min-height: 100vh;
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto 1fr auto;
+}
+
+/* 
+   MODE: Project Wiki (Full Height Sidebar) 
+   Sidebar left of Header and Main
+*/
+body.has-mini-wiki-sidebar.mini-sidebar-mode-project_wiki #wrapper {
+    grid-template-areas:
+        "top top"
+        "side header"
+        "side main"
+        "side footer";
+}
+
+/* 
+   MODE: Wiki Only (Sidebar below Header) 
+   Header full width, Sidebar left of Main only
+*/
+body.has-mini-wiki-sidebar.mini-sidebar-mode-wiki #wrapper {
+    grid-template-areas:
+        "top top"
+        "header header"
+        "side main"
+        "side footer";
+}
+
+/* Assign Grid Areas */
+body.has-mini-wiki-sidebar #top-menu {
+    grid-area: top;
+    width: auto !important;
+    box-sizing: border-box;
+}
+
+body.has-mini-wiki-sidebar #header {
+    grid-area: header;
+    width: auto;
+}
+
+body.has-mini-wiki-sidebar #main {
+    grid-area: main;
+    width: auto !important;
+    /* Override Redmine overrides */
+    display: block !important;
+    /* Reset flex if previously set */
+    flex: none;
+}
+
+body.has-mini-wiki-sidebar #footer {
+    grid-area: footer;
+    width: auto;
+}
+
+/* 
+   Sidebar Container 
+   Placed in 'side' area which spans rows 2,3,4 (header, main, footer)
+*/
+#mini-wiki-sidebar {
+    grid-area: side;
+
+    width: 280px;
+    min-width: 280px;
+    background-color: #f6f6f6;
+    border-right: 1px solid #ddd;
+    padding: 40px 15px 15px 15px;
+    /* Top padding for the toggle button */
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    /* Layout constraints */
+    height: 100%;
+    /* Fill grid area height */
+    min-height: 0;
+    /* Allow grid to manage height */
+
+    position: relative;
+    /* Animate width for smooth collapse */
+    transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    z-index: 100;
+    /* Ensure above content if overlap occurs */
+}
+
+/* Disable transitions during resizing for snappy performance */
+#mini-wiki-sidebar.resizing-active {
+    transition: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   Collapsed State
+   ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+   Collapsed State (0 Width)
+   ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+   Collapsed State (0 Width)
+   ------------------------------------------------------------------------- */
+#mini-wiki-sidebar.collapsed,
+body.mini-wiki-sidebar-closed #mini-wiki-sidebar {
+    width: 0 !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-right: none !important;
+    margin: 0 !important;
+    /* Use visibility: hidden to hide everything (text, overflow) effectively */
+    /* But allows us to make specific children visible again */
+    visibility: hidden !important;
+    overflow: visible !important;
+    /* Necessary for the fixed button to "escape" if it wasn't fixed? 
+                                     Actually, if it's fixed, it escapes anyway. 
+                                     If absolute, we need this or it gets clipped if parent is 0x0?
+                                     Wait, visibility: hidden hides children too. */
+}
+
+/* Ensure the toggle button remains visible even if parent is invisible */
+body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+}
+
+/* Explicitly hide inner content just in case */
+body.mini-wiki-sidebar-closed #mini-wiki-sidebar .mini-sidebar-content,
+body.mini-wiki-sidebar-closed #mini-wiki-sidebar .wiki-sidebar-header,
+body.mini-wiki-sidebar-closed #mini-wiki-sidebar #mini-sidebar-resizer,
+body.mini-wiki-sidebar-closed #mini-wiki-sidebar ul {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* -------------------------------------------------------------------------
+   Toggle Button (Hamburger / Chevron)
+   ------------------------------------------------------------------------- */
+.mini-wiki-sidebar-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #aeaeae;
+    background: transparent;
+    border: none;
+    padding: 4px 8px;
+    z-index: 1001;
+    transition: all 0.3s ease;
+
+    /* Ensure flex/block behavior */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-wiki-sidebar-toggle:hover {
+    color: #444;
+}
+
+.mini-wiki-sidebar-toggle::before {
+    content: '‹';
+    /* Default Open */
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Button Positioning when Collapsed */
+
+/* MODE: Project Wiki (Left of Header) */
+body.mini-wiki-sidebar-closed.mini-sidebar-mode-project_wiki .mini-wiki-sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    color: #f8f8f8;
+    /* Light for header */
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+}
+
+/* MODE: Wiki Only (Top Left of Content) */
+body.mini-wiki-sidebar-closed.mini-sidebar-mode-wiki .mini-wiki-sidebar-toggle {
+    position: fixed;
+    top: 120px;
+    /* Adjust based on header height */
+    left: 10px;
+    color: #333;
+    width: 30px;
+    height: 30px;
+}
+
+/* Icon Switch when Closed */
+body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle::before {
+    content: '☰';
+    font-size: 18px;
+    font-weight: normal;
+}
+
+/* Button Positioning when OPEN (Inside Sidebar) */
+/* Reset to absolute inside sidebar */
+#mini-wiki-sidebar:not(.collapsed) .mini-wiki-sidebar-toggle,
+body:not(.mini-wiki-sidebar-closed) .mini-wiki-sidebar-toggle {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 18px;
+    height: 12px;
+    background: transparent;
+    color: #999;
+    /* Adjust line-height/font-size to fit smaller box if needed, 
+       but keeping user request strict currently. 
+       Maybe center icon? */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* -------------------------------------------------------------------------
+   Content Styling
+   ------------------------------------------------------------------------- */
+#mini-wiki-sidebar ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#mini-wiki-sidebar li {
+    margin-bottom: 2px;
+    position: relative;
+    /* Flexbox to align Expand Icon + Link */
+    display: flex !important;
+    flex-wrap: wrap;
+    /* Key for nested lists */
+    align-items: flex-start;
+    /* Top align */
+}
+
+/* The Link itself */
+a.wiki-page-link {
+    display: inline-block;
+    padding: 3px 6px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    /* Flex behavior */
+    flex: 1;
+    min-width: 0;
+    /* Text ellipsis needs this */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+a.wiki-page-link:hover {
+    background-color: #cce0f0;
+    color: #222;
+    text-decoration: none;
+}
+
+a.wiki-page-link.active {
+    background-color: #cce0f0;
+    color: #222;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* TYPE DISTINCTION */
+/* Projects */
+a.wiki-page-link.type-project {
+    font-weight: 600;
+}
+
+a.wiki-page-link.type-project::before {
+    content: '📂';
+    /* Folder Icon */
+    margin-right: 6px;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+/* Wiki Pages */
+a.wiki-page-link.type-page {
+    font-weight: 400;
+}
+
+a.wiki-page-link.type-page::before {
+    content: '📄';
+    /* Document Icon */
+    margin-right: 6px;
+    font-weight: normal;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+/* Hide Wiki Page Icon in Wiki-Only Mode */
+body.mini-sidebar-mode-wiki a.wiki-page-link.type-page::before {
+    content: none;
+    display: none;
+    margin-right: 0;
+}
+
+/* Expand Icons (Arrows) */
+/* Expand Icons (Arrows) */
+.expand-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    /* Increased to fit larger icon */
+    height: 24px;
+    cursor: pointer;
+    color: #999;
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    /* User requested 1.5rem */
+    line-height: 1;
+}
+
+.expand-icon::before {
+    content: '▸';
+    /* Closed */
+}
+
+li.expanded>.expand-icon::before {
+    content: '▾';
+    /* Open */
+}
+
+/* Headers H2 */
+ul.wiki-page-headers {
+    display: none;
+    width: 100%;
+    /* Align ¶ under the page icon (approx 34px indent) */
+    padding-left: 34px !important;
+    margin: 2px 0 !important;
+}
+
+/* Add space for the hamburger button in specific collapsed modes */
+body.mini-wiki-sidebar-closed.mini-sidebar-mode-project_wiki #header {
+    padding-left: 45px !important;
+    box-sizing: border-box;
+    /* Ensure background covers the padding if needed, or transparent? 
+       Usually header has a background image/color. 
+       Use box-sizing to keep width correct. */
+}
+
+a.wiki-header-link {
+    color: #666;
+    font-size: 0.9rem;
+    padding: 2px 4px 2px 18px;
+    /* Left padding for the absolute icon */
+    position: relative;
+    /* Context for icon */
+
+    text-decoration: none;
+    line-height: 1.4;
+
+    /* Multi-line Truncation (Wrap first, then truncate) */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    /* Allow wrapping */
+    white-space: normal;
+    word-break: break-word;
+    /* Ensure long words break */
+    max-width: 100%;
+}
+
+a.wiki-header-link:hover {
+    color: #007bff;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+}
+
+a.wiki-header-link::before {
+    content: '¶';
+    position: absolute;
+    left: 4px;
+    /* Align with left padding start */
+    top: 2px;
+    /* Match top padding */
+
+    color: #999;
+    font-weight: normal;
+    font-size: 0.85em;
+    line-height: 1.4;
+    /* Sync with text */
+}
+
+/* Nested Page Lists */
+#mini-wiki-sidebar li>ul {
+    display: none;
+    width: 100%;
+    /* Break to new line */
+    padding-left: 20px;
+}
+
+#mini-wiki-sidebar li.expanded>ul {
+    display: block;
+}
+
+/* -------------------------------------------------------------------------
+   Resizer Handle
+   ------------------------------------------------------------------------- */
+.mini-wiki-sidebar-resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1002;
+    background-color: transparent;
+    transition: background-color 0.2s;
+}
+
+.mini-wiki-sidebar-resizer:hover,
+.mini-wiki-sidebar-resizer.resizing {
+    background-color: #007bff;
+}

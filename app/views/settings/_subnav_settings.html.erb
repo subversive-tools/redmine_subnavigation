@@ -1,0 +1,9 @@
+<p>
+  <label><%= I18n.t(:setting_wiki_sidebar_mode) %></label>
+  <%= select_tag 'settings[sidebar_mode]', 
+      options_for_select([
+        ['Disabled', 'none'], 
+        ['Wiki Only', 'wiki'], 
+        ['Wiki + Projects', 'project_wiki']
+      ], @settings['sidebar_mode']) %>
+</p>
