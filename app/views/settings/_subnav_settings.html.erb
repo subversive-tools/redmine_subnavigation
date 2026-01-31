@@ -2,8 +2,8 @@
   <label><%= I18n.t(:setting_wiki_sidebar_mode) %></label>
   <%= select_tag 'settings[sidebar_mode]', 
       options_for_select([
-        ['Disabled', 'none'], 
-        ['Wiki & Page Headers', 'wiki'], 
-        ['Full Hierarchy (Projects, Wiki & Headers)', 'project_wiki']
+        [l(:label_subnav_disabled), 'none'], 
+        [l(:label_subnav_wiki), 'wiki'], 
+        [l(:label_subnav_project_wiki), 'project_wiki']
       ], @settings['sidebar_mode']) %>
 </p>

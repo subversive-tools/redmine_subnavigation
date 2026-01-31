@@ -11,6 +11,6 @@ Redmine::Plugin.register :redmine_subnavigation do
   }, partial: 'settings/subnav_settings'
 end
 
-require_relative 'lib/redmine_subnavigation/hooks'
 require_relative 'lib/redmine_subnavigation/wiki_sidebar_helper'
+require_relative 'lib/redmine_subnavigation/hooks'
 
