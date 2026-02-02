@@ -460,7 +460,9 @@ a.wiki-header-link::before {
 a.wiki-header-link.active {
     color: var(--subnav-active-text) !important;
     background-color: var(--subnav-active-bg);
-    border-radius: 4px;
+    border-radius: 0 4px 4px 0;
+    border-left: 3px solid #007bff;
+    /* Visual Indicator */
     font-weight: 600;
 }
 
