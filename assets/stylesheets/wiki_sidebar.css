@@ -267,10 +267,7 @@ a.wiki-page-link.type-page::before {
     opacity: 0.7;
 }
 
-body.mini-sidebar-mode-wiki a.wiki-page-link.type-page::before {
-    display: none;
-    margin-right: 0;
-}
+/* Page Icon Display Rule Removed based on user request */
 
 /* Expand Icons */
 .expand-icon {
