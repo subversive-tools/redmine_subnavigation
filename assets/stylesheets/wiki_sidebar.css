@@ -112,6 +112,7 @@ body.has-mini-wiki-sidebar #footer {
 }
 
 /* Collapsed State */
+/* Collapsed State */
 #mini-wiki-sidebar.collapsed,
 body.mini-wiki-sidebar-closed #mini-wiki-sidebar {
     width: 0 !important;
@@ -119,8 +120,9 @@ body.mini-wiki-sidebar-closed #mini-wiki-sidebar {
     padding: 0 !important;
     border-right: none !important;
     margin: 0 !important;
-    visibility: hidden !important;
     overflow: visible !important;
+    background-color: transparent;
+    /* Ensure no bg when closed */
 }
 
 /* Toggle Button */
@@ -152,35 +154,47 @@ body.mini-wiki-sidebar-closed #mini-wiki-sidebar ul {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Default Fixed Position for Detached Button */
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    /* Hidden behind sidebar usually, but visible when closed */
-    width: 30px;
-    height: 30px;
+    /* Absolute relative to the STICKY Sidebar */
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 
 /* When sidebar acts as a sibling overlapping */
 body:not(.mini-wiki-sidebar-closed) .mini-wiki-sidebar-toggle {
-    /* Move it to the right of the sidebar or inside it visually? */
-    /* Since it's fixed, we must manually position it */
-    left: 240px;
-    /* subnav-width (280) - something? Align with sidebar header? */
-    /* Actually better: Make it sit on top of sidebar if sidebar is open */
-    left: 245px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 18px;
+    height: 12px;
     color: #999;
-    background: transparent;
 }
 
+/* When sidebar is closed, button needs to be positioned nicely */
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
-    left: 10px;
+    /* Since sidebar width is 0, we position relative to it */
+    position: absolute;
     top: 10px;
-    background: rgba(0, 0, 0, 0.4);
+    right: auto;
+    left: 10px;
+    /* Push it out a bit */
+    width: 30px;
+    height: 30px;
     color: #f8f8f8;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 3px;
 }
 
-/* Hover state */
+/* Override styling for different modes not really needed if sticky works */
+body.mini-wiki-sidebar-closed.mini-sidebar-mode-wiki .mini-wiki-sidebar-toggle {
+    /* If header is tall, sticky ensures it stays put relative to grid area */
+    /* top: 120px; <-- Remove hardcoded offset, rely on sticky */
+    color: #333;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd;
+}
+
+/* Hover State */
 .mini-wiki-sidebar-toggle:hover {
     color: #444;
 }

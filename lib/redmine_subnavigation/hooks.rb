@@ -47,10 +47,10 @@ module RedmineSubnavigation
 
       output = []
       output << <<~HTML
-        <div class="mini-wiki-sidebar-toggle" onclick="toggleWikiSidebar()">
-          <span class="icon"></span>
-        </div>
         <div id="mini-wiki-sidebar" class="mini-wiki-sidebar">
+          <div class="mini-wiki-sidebar-toggle" onclick="toggleWikiSidebar()">
+            <span class="icon"></span>
+          </div>
           <div class="mini-wiki-sidebar-content">
             #{sidebar_content}
           </div>
