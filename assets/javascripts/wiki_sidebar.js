@@ -66,23 +66,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 4. Highlight current page & Expand Parents
-    const currentPath = window.location.pathname;
-    // Basic exact match (can be improved with fuzzy match if needed)
-    const activeLink = sidebar.querySelector(`a.wiki-page-link[href="${currentPath}"]`);
+    const currentPath = decodeURIComponent(window.location.pathname);
+
+    // Convert hrefs to decoded path for comparison to handle special chars/spaces
+    const links = sidebar.querySelectorAll('a.wiki-page-link');
+    let activeLink = null;
+
+    for (let link of links) {
+        // Get the path attribute from href (relative or absolute)
+        const hrefPath = decodeURIComponent(link.getAttribute('href'));
+        if (hrefPath === currentPath) {
+            activeLink = link;
+            break;
+        }
+    }
 
     if (activeLink) {
         activeLink.classList.add('active');
-        
-        // Traverse up to expand all parents
-        let parent = activeLink.parentElement;
-        while (parent && parent !== sidebar) {
-            if (parent.tagName === 'LI') {
-                parent.classList.add('expanded');
-                // Ensure its child UL is visible if it exists (though CSS handles this via .expanded > ul)
-                const childUl = parent.querySelector('ul');
-                if(childUl) childUl.style.display = 'block'; 
+
+        // Expand the current LI to show subpages (children)
+        const currentLi = activeLink.closest('li');
+        if (currentLi) {
+            currentLi.classList.add('expanded');
+            const childUl = currentLi.querySelector('ul');
+            if (childUl) childUl.style.display = 'block';
+
+            // Traverse up to expand all parents
+            let parent = currentLi.parentElement;
+            while (parent && parent !== sidebar) {
+                if (parent.tagName === 'LI') {
+                    parent.classList.add('expanded');
+                    const parentUl = parent.querySelector('ul');
+                    if (parentUl) parentUl.style.display = 'block';
+                }
+                parent = parent.parentElement;
             }
-            parent = parent.parentElement;
         }
 
         if (!isClosed) {
@@ -94,20 +112,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 5. EVENT DELEGATION for Expand/Collapse (Performance Optimization)
     // Instead of attaching listener to every icon, we listen on the sidebar
-    sidebar.addEventListener('click', function(e) {
+    sidebar.addEventListener('click', function (e) {
         // Check if clicked element is expand-icon or inside it
         const icon = e.target.closest('.expand-icon');
         if (icon) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const li = icon.closest('li');
             if (li) {
                 li.classList.toggle('expanded');
                 // Toggle display of UL (logic moved from multiple listeners to here)
                 const childrenUl = li.querySelector('ul');
                 if (childrenUl) {
-                     childrenUl.style.display = li.classList.contains('expanded') ? 'block' : 'none';
+                    childrenUl.style.display = li.classList.contains('expanded') ? 'block' : 'none';
                 }
             }
         }
@@ -124,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const childrenUl = li.querySelector('ul');
         if (childrenUl) {
             if (isTopLevel) childrenUl.style.display = 'block';
-            
+
             const toggle = document.createElement('span');
             toggle.className = 'expand-icon';
             // NO onclick handler here anymore!
@@ -142,10 +160,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.toggle('mini-wiki-sidebar-closed');
         const isNowClosed = document.body.classList.contains('mini-wiki-sidebar-closed');
         localStorage.setItem('redmine_mini_wiki_sidebar_closed', isNowClosed);
-        
+
         if (!isNowClosed) {
             const stored = localStorage.getItem('redmine_mini_wiki_sidebar_width');
-             if (stored) {
+            if (stored) {
                 sidebar.style.width = stored + 'px';
                 sidebar.style.minWidth = stored + 'px';
             } else {
