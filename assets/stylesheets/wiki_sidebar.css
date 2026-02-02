@@ -165,24 +165,27 @@ body.mini-wiki-sidebar-closed #mini-wiki-sidebar ul {
 }
 
 /* Button Positioning (Collapsed) */
-body.mini-wiki-sidebar-closed.mini-sidebar-mode-project_wiki .mini-wiki-sidebar-toggle {
+/* Button Positioning (Collapsed) - Catch-all */
+body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
     position: fixed;
     top: 10px;
     left: 10px;
+    z-index: 1005;
+    /* Ensure above header */
     color: #f8f8f8;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    /* Darker contrast */
     border-radius: 3px;
     width: 30px;
     height: 30px;
 }
 
+/* Specific overrides if needed, but the above is robust */
 body.mini-wiki-sidebar-closed.mini-sidebar-mode-wiki .mini-wiki-sidebar-toggle {
-    position: fixed;
     top: 120px;
-    left: 10px;
+    /* Specific offset for wiki-only mode if needed, or remove to unify */
     color: #333;
-    width: 30px;
-    height: 30px;
+    background: rgba(255, 255, 255, 0.8);
 }
 
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle::before {
