@@ -4,3 +4,4 @@ en:
   label_subnav_disabled: "Disabled"
   label_subnav_wiki: "Wiki & Headings"
   label_subnav_project_wiki: "Full Hierarchy (Projects, Wiki & Headings)"
+  label_subnav_header_max_depth: "Max Headings Depth"

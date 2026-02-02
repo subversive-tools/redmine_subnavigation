@@ -7,3 +7,9 @@
         [l(:label_subnav_project_wiki), 'project_wiki']
       ], @settings['sidebar_mode']) %>
 </p>
+
+<p>
+  <label><%= I18n.t(:label_subnav_header_max_depth) %></label>
+  <%= select_tag 'settings[header_max_depth]', 
+      options_for_select((1..5).to_a, @settings['header_max_depth'].to_i) %>
+</p>

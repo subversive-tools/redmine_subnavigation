@@ -323,6 +323,34 @@ a.wiki-header-link {
     max-width: 100%;
 }
 
+/* Indentation for Header Levels */
+a.wiki-header-link.wiki-header-h1 {
+    padding-left: 18px;
+    font-weight: 600;
+}
+
+a.wiki-header-link.wiki-header-h2 {
+    padding-left: 28px;
+}
+
+a.wiki-header-link.wiki-header-h3 {
+    padding-left: 38px;
+    color: #777;
+    font-size: 0.85rem;
+}
+
+a.wiki-header-link.wiki-header-h4 {
+    padding-left: 48px;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+a.wiki-header-link.wiki-header-h5 {
+    padding-left: 58px;
+    color: #999;
+    font-size: 0.8rem;
+}
+
 a.wiki-header-link:hover {
     color: var(--subnav-resizer-hover);
     background-color: #f0f0f0;

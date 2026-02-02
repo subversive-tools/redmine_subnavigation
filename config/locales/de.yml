@@ -4,3 +4,4 @@ de:
   label_subnav_disabled: "Deaktiviert"
   label_subnav_wiki: "Wiki & Überschriften"
   label_subnav_project_wiki: "Komplette Hierarchie (Projekte, Wiki & Überschriften)"
+  label_subnav_header_max_depth: "Maximale Überschriftentiefe"
