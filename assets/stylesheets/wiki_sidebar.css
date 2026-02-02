@@ -57,9 +57,9 @@ body.has-mini-wiki-sidebar #main {
     grid-area: main;
     width: auto !important;
     /* Override Redmine overrides */
-    display: block !important;
+    /* display: block !important; */
     /* Reset flex if previously set */
-    flex: none;
+    /* flex: none; */
 }
 
 body.has-mini-wiki-sidebar #footer {
