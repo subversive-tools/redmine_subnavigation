@@ -59,7 +59,7 @@ Navigate to **Administration > Plugins > Subnavigation > Configure**.
 | Option | Description |
 |:---|:---|
 | **Disabled** | Plugin is inactive. |
-| **Wiki & Page Headers** | Sidebar shows Wiki pages and headings only. |
+| **Wiki & Headings** | Sidebar shows Wiki pages and headings only. |
 | **Full Hierarchy** | Sidebar shows Projects, Wiki pages, and headings. |
 
 ## 🤝 Contributing

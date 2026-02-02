@@ -2,5 +2,5 @@ en:
   setting_wiki_sidebar_mode: "Navigation Mode"
   redmine_subnavigation: "Subnavigation"
   label_subnav_disabled: "Disabled"
-  label_subnav_wiki: "Wiki & Page Headers"
-  label_subnav_project_wiki: "Full Hierarchy (Projects, Wiki & Headers)"
+  label_subnav_wiki: "Wiki & Headings"
+  label_subnav_project_wiki: "Full Hierarchy (Projects, Wiki & Headings)"

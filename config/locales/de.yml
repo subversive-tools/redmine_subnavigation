@@ -2,5 +2,5 @@ de:
   setting_wiki_sidebar_mode: "Navigationsmodus"
   redmine_subnavigation: "Subnavigation"
   label_subnav_disabled: "Deaktiviert"
-  label_subnav_wiki: "Wiki & Seitenüberschriften"
+  label_subnav_wiki: "Wiki & Überschriften"
   label_subnav_project_wiki: "Komplette Hierarchie (Projekte, Wiki & Überschriften)"
