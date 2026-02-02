@@ -110,8 +110,27 @@ document.addEventListener('DOMContentLoaded', function () {
         // 1. Sidebar Active State
         let activeLink = clickedLink;
         if (!activeLink && anchor) {
-            // Case-insensitive attribute match for robustness
+            // A. Try Exact Attribute Match
             activeLink = sidebar.querySelector(`a.wiki-header-link[data-anchor="${anchor}"]`);
+
+            // B. Fallback: Reverse Slug Match
+            // URL might be "My-Header" but Sidebar expects "my-header".
+            // OR URL is "My-Header" and Sidebar Text is "My Header".
+            if (!activeLink) {
+                // specific cleanup for common Redmine/Textile patterns
+                // Replace hyphens/underscores with spaces
+                const humanizedAnchor = anchor.replace(/[-_]/g, ' ').toLowerCase();
+
+                const links = sidebar.querySelectorAll('a.wiki-header-link');
+                for (let link of links) {
+                    const text = (link.getAttribute('data-header-text') || '').toLowerCase();
+                    // Check if normalized matches
+                    if (text && (text === humanizedAnchor || text.includes(humanizedAnchor))) {
+                        activeLink = link;
+                        break;
+                    }
+                }
+            }
         }
         if (activeLink) activeLink.classList.add('active');
 
