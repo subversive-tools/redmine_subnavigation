@@ -104,8 +104,20 @@ module RedmineSubnavigation
     end
 
     def link_to_page(page)
+      display_title = page.pretty_title
+      if page.content
+        # Try to find a H1 in text
+        # Markdown: # Header or #Header
+        if match = page.content.text.match(/^#\s+(.+)$/)
+          display_title = match[1].strip
+        # Textile: h1. Header
+        elsif match = page.content.text.match(/^h1\.\s+(.+)$/)
+          display_title = match[1].strip
+        end
+      end
+      
       # Basic link, improvements like "active" class can be handled by JS matching URL
-      "<a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title)}\" class=\"wiki-page-link type-page\" data-title=\"#{page.title}\">#{page.pretty_title}</a>"
+      "<a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title)}\" class=\"wiki-page-link type-page\" data-title=\"#{page.title}\">#{display_title}</a>"
     end
 
     def render_headers(page)

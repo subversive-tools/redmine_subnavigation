@@ -324,13 +324,22 @@ a.wiki-header-link {
 }
 
 /* Indentation for Header Levels */
+/* Indentation for Header Levels */
 a.wiki-header-link.wiki-header-h1 {
     padding-left: 18px;
     font-weight: 600;
 }
 
+a.wiki-header-link.wiki-header-h1::before {
+    left: 4px;
+}
+
 a.wiki-header-link.wiki-header-h2 {
     padding-left: 28px;
+}
+
+a.wiki-header-link.wiki-header-h2::before {
+    left: 14px;
 }
 
 a.wiki-header-link.wiki-header-h3 {
@@ -339,16 +348,28 @@ a.wiki-header-link.wiki-header-h3 {
     font-size: 0.85rem;
 }
 
+a.wiki-header-link.wiki-header-h3::before {
+    left: 24px;
+}
+
 a.wiki-header-link.wiki-header-h4 {
     padding-left: 48px;
     color: #888;
     font-size: 0.8rem;
 }
 
+a.wiki-header-link.wiki-header-h4::before {
+    left: 34px;
+}
+
 a.wiki-header-link.wiki-header-h5 {
     padding-left: 58px;
     color: #999;
     font-size: 0.8rem;
+}
+
+a.wiki-header-link.wiki-header-h5::before {
+    left: 44px;
 }
 
 a.wiki-header-link:hover {
