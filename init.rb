@@ -7,7 +7,6 @@ Redmine::Plugin.register :redmine_subnavigation do
   author_url 'https://github.com/modoq'
 
   settings default: {
-  settings default: {
     'sidebar_mode' => 'wiki', # 'none', 'wiki', 'project_wiki'
     'header_max_depth' => '3'
   }, partial: 'settings/subnav_settings'
