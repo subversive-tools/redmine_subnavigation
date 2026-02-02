@@ -455,3 +455,34 @@ a.wiki-header-link::before {
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
 }
+
+/* Header Highlighting (Active State) */
+a.wiki-header-link.active {
+    color: var(--subnav-active-text) !important;
+    background-color: var(--subnav-active-bg);
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Content Header Highlight Animation */
+@keyframes target-fade {
+    0% {
+        background-color: rgba(255, 243, 205, 0);
+    }
+
+    10% {
+        background-color: rgba(255, 243, 205, 1);
+        border-radius: 4px;
+        padding-left: 5px;
+        margin-left: -5px;
+        box-shadow: 0 0 0 5px rgba(255, 243, 205, 1);
+    }
+
+    100% {
+        background-color: rgba(255, 243, 205, 0);
+    }
+}
+
+.wiki-header-highlight-target {
+    animation: target-fade 2s ease-out;
+}
