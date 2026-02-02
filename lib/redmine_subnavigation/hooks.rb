@@ -20,7 +20,20 @@ module RedmineSubnavigation
       # Ensure wiki module is enabled if we are in wiki mode
       return '' if mode == 'wiki' && !context[:project].module_enabled?(:wiki)
 
-      sidebar_content = render_sidebar_navigation(context[:project], mode)
+      # Cache key to prevent rendering bottlenecks
+      # Includes: Project ID, Project update time, User ID (permissions), and Mode
+      cache_key = [
+        'redmine_subnavigation',
+        'sidebar',
+        context[:project].id,
+        context[:project].updated_on.to_i,
+        User.current.id,
+        mode
+      ].join('/')
+
+      sidebar_content = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
+        render_sidebar_navigation(context[:project], mode)
+      end
       return '' if sidebar_content.empty?
 
       output = []

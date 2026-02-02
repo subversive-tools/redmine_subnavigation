@@ -1,0 +1,43 @@
+name: Redmine Plugin Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Redmine ${{ matrix.redmine-version }} / Ruby ${{ matrix.ruby-version }}
+    strategy:
+      matrix:
+        ruby-version: ['3.0', '3.1', '3.2']
+        redmine-version: ['5.0-stable', '5.1-stable', 'master']
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        path: redmine_subnavigation
+
+    - name: Clone Redmine
+      run: |
+        git clone --depth=1 --branch ${{ matrix.redmine-version }} https://github.com/redmine/redmine.git .
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+
+    - name: Install Dependencies
+      run: |
+        bundle install
+        # Move plugin to correct location
+        mv redmine_subnavigation plugins/
+        # Create database.yml (SQLite for testing)
+        echo "test:
+          adapter: sqlite3
+          database: db/test.sqlite3" > config/database.yml
+
+    - name: Run Tests
+      run: |
+        bundle exec rake db:migrate RAILS_ENV=test
+        bundle exec rake redmine:plugins:migrate RAILS_ENV=test
+        bundle exec rake redmine:plugins:test NAME=redmine_subnavigation RAILS_ENV=test
