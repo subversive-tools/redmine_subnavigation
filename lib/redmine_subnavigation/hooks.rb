@@ -17,7 +17,15 @@ module RedmineSubnavigation
       mode = Setting.plugin_redmine_subnavigation['sidebar_mode']
       return '' if mode.blank? || mode == 'none'
       
-      # Ensure wiki module is enabled if we are in wiki mode
+      # 1. Module active in Project?
+      return '' unless context[:project].module_enabled?(:subnavigation)
+      
+      # 2. Context Check: "Wiki & Headings" mode -> Only on WikiController
+      if mode == 'wiki'
+        return '' unless context[:controller] && context[:controller].is_a?(WikiController)
+      end
+      
+      # Ensure wiki module is enabled if we are in wiki mode (redundant with above but safe)
       return '' if mode == 'wiki' && !context[:project].module_enabled?(:wiki)
 
       # Cache key to prevent rendering bottlenecks
@@ -27,6 +35,7 @@ module RedmineSubnavigation
         'sidebar',
         context[:project].id,
         context[:project].updated_on.to_i,
+        context[:project].module_enabled?(:subnavigation),
         User.current.id,
         mode
       ].join('/')
