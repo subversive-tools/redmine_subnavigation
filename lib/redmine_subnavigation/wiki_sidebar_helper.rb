@@ -172,7 +172,7 @@ module RedmineSubnavigation
           anchor = base_anchor
         end
 
-        html << "<li><a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title, anchor: anchor)}\" class=\"wiki-header-link wiki-header-h#{level}\" data-anchor=\"#{anchor}\">#{header}</a></li>"
+        html << "<li><a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title, anchor: anchor)}\" class=\"wiki-header-link wiki-header-h#{level}\" data-anchor=\"#{anchor}\" data-header-text=\"#{header}\">#{header}</a></li>"
       end
       html << '</ul>'
       html

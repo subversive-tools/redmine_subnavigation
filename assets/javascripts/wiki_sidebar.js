@@ -65,49 +65,107 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 4. Highlight current page & Expand Parents
-    const currentPath = decodeURIComponent(window.location.pathname);
+    // 4. Highlight Logic
 
-    // Convert hrefs to decoded path for comparison to handle special chars/spaces
+    // A. Highlight Current Page Node & Expand Tree
+    const currentPath = decodeURIComponent(window.location.pathname);
     const links = sidebar.querySelectorAll('a.wiki-page-link');
-    let activeLink = null;
+    let activePageLink = null;
 
     for (let link of links) {
-        // Get the path attribute from href (relative or absolute)
         const hrefPath = decodeURIComponent(link.getAttribute('href'));
         if (hrefPath === currentPath) {
-            activeLink = link;
+            activePageLink = link;
             break;
         }
     }
 
-    if (activeLink) {
-        activeLink.classList.add('active');
-
-        // Expand the current LI to show subpages (children)
-        const currentLi = activeLink.closest('li');
+    if (activePageLink) {
+        activePageLink.classList.add('active');
+        const currentLi = activePageLink.closest('li');
         if (currentLi) {
-            currentLi.classList.add('expanded');
-            const childUl = currentLi.querySelector('ul');
-            if (childUl) childUl.style.display = 'block';
-
-            // Traverse up to expand all parents
-            let parent = currentLi.parentElement;
+            // Expand parents
+            let parent = currentLi;
             while (parent && parent !== sidebar) {
                 if (parent.tagName === 'LI') {
                     parent.classList.add('expanded');
-                    const parentUl = parent.querySelector('ul');
-                    if (parentUl) parentUl.style.display = 'block';
+                    const ul = parent.querySelector('ul');
+                    if (ul) ul.style.display = 'block';
                 }
                 parent = parent.parentElement;
             }
+            // Scroll to page link if needed
+            if (!isClosed) {
+                setTimeout(() => activePageLink.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }
+        }
+    }
+
+    // B. Header Navigation Highlighting (Robust)
+    function highlightHeader(anchor, clickedLink = null) {
+        // Clear previous header/sidebar highlights
+        sidebar.querySelectorAll('a.wiki-header-link').forEach(a => a.classList.remove('active'));
+        document.querySelectorAll('.wiki-header-highlight-target').forEach(el => el.classList.remove('wiki-header-highlight-target'));
+
+        // 1. Sidebar Active State
+        let activeLink = clickedLink;
+        if (!activeLink && anchor) {
+            // Case-insensitive attribute match for robustness
+            activeLink = sidebar.querySelector(`a.wiki-header-link[data-anchor="${anchor}"]`);
+        }
+        if (activeLink) activeLink.classList.add('active');
+
+        // 2. Content Highlight (Target Header)
+        if (!anchor && !activeLink) return;
+
+        let target = null;
+
+        // Try exact ID match first
+        if (anchor) target = document.getElementById(anchor);
+
+        // Try named anchor <a name="foo"> which Redmine uses often
+        if (!target && anchor) target = document.querySelector(`a[name="${anchor}"]`);
+
+        // Robust Fallback: Search by Text Content if we know it (from data-header-text)
+        if (!target && activeLink) {
+            const headerText = activeLink.getAttribute('data-header-text');
+            if (headerText) {
+                const headers = document.querySelectorAll('.wiki h1, .wiki h2, .wiki h3, .wiki h4, .wiki h5');
+                for (let h of headers) {
+                    if (h.textContent.trim() === headerText) {
+                        target = h;
+                        break;
+                    }
+                }
+            }
         }
 
-        if (!isClosed) {
-            setTimeout(() => {
-                activeLink.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+        if (target) {
+            // If target is <a> (anchor), the visual header is usually the next sibling
+            if (target.tagName === 'A') target = target.nextElementSibling;
+
+            if (target && /^H[1-6]$/.test(target.tagName)) {
+                target.classList.add('wiki-header-highlight-target');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
+    }
+
+    // Listener for Header Links
+    sidebar.addEventListener('click', function (e) {
+        const link = e.target.closest('a.wiki-header-link');
+        if (link) {
+            const anchor = link.getAttribute('data-anchor');
+            highlightHeader(anchor, link);
+        }
+    });
+
+    // Initial Hash Check
+    if (window.location.hash) {
+        try {
+            const anchor = decodeURIComponent(window.location.hash.substring(1));
+            highlightHeader(anchor);
+        } catch (e) { console.error(e); }
     }
 
     // 5. EVENT DELEGATION for Expand/Collapse (Performance Optimization)
