@@ -321,52 +321,51 @@ a.wiki-header-link {
 }
 
 /* Indentation for Header Levels */
-/* Indentation for Header Levels */
 a.wiki-header-link.wiki-header-h1 {
-    padding-left: 18px;
+    padding-left: 12px;
     font-weight: 600;
 }
 
 a.wiki-header-link.wiki-header-h1::before {
-    left: 4px;
+    left: 0px;
 }
 
 a.wiki-header-link.wiki-header-h2 {
-    padding-left: 28px;
+    padding-left: 20px;
 }
 
 a.wiki-header-link.wiki-header-h2::before {
-    left: 14px;
+    left: 8px;
 }
 
 a.wiki-header-link.wiki-header-h3 {
-    padding-left: 38px;
+    padding-left: 28px;
     color: #777;
     font-size: 0.85rem;
 }
 
 a.wiki-header-link.wiki-header-h3::before {
-    left: 24px;
+    left: 16px;
 }
 
 a.wiki-header-link.wiki-header-h4 {
-    padding-left: 48px;
+    padding-left: 36px;
     color: #888;
     font-size: 0.8rem;
 }
 
 a.wiki-header-link.wiki-header-h4::before {
-    left: 34px;
+    left: 24px;
 }
 
 a.wiki-header-link.wiki-header-h5 {
-    padding-left: 58px;
+    padding-left: 44px;
     color: #999;
     font-size: 0.8rem;
 }
 
 a.wiki-header-link.wiki-header-h5::before {
-    left: 44px;
+    left: 32px;
 }
 
 a.wiki-header-link:hover {
