@@ -1,7 +1,7 @@
 Redmine::Plugin.register :redmine_subnavigation do
   name 'Subnavigation'
   author 'Stefan Mischke'
-  description 'Provides a comprehensive sidebar navigation tree for projects, subprojects, wiki pages, and wiki content headings.'
+  description 'Provides a comprehensive sidebar navigation tree for projects, subprojects, wiki pages, and wiki headings.'
   version '0.2.0'
   url 'https://github.com/modoq/redmine_subnavigation'
   author_url 'https://github.com/modoq'

@@ -1,43 +1,77 @@
 # Redmine Subnavigation Plugin
 
-A Redmine plugin that provides a collapsible sidebar navigation tree for projects, subprojects, wiki pages, and content headings.
+![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
+![Redmine](https://img.shields.io/badge/Redmine-5.0%20%7C%206.0-red.svg?logo=redmine)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## Features
+**A powerful, collapsible sidebar navigation tree for Redmine.**
 
-- **Collapsible Sidebar**: Easily toggle the navigation tree.
-- **Project Navigation**: Navigate through the project hierarchy.
-- **Wiki Navigation**: Tree view of all wiki pages in the project.
-- **Content Headings**: Automatically lists headings (h1, h2, etc.) for the current wiki page for quick access.
-- **Configurable Modes**:
-  - `Disabled`
-  - `Wiki & Page Headers`
-  - `Full Hierarchy (Projects, Wiki & Headers)`
+Transform your Redmine experience with a clean, hierarchical view of your Projects, Wiki pages, and Wiki Headings. Designed for productivity and ease of use.
 
-## Installation
+---
 
-**Important:** The plugin directory **MUST** be named `redmine_subnavigation` for the asset pipeline to function correctly.
+## 🚀 Features
 
-1.  Clone or download the plugin into your Redmine `plugins` directory:
+- **📂 Project Hierarchy**: Navigate smoothly through projects and subprojects.
+- **📄 Wiki Tree**: Visual tree structure for all wiki pages.
+- **¶ Wiki Headings**: Automatic Table of Contents (h1, h2, etc.) for the current page.
+- **⚡ Collapsible Sidebar**: Toggle the sidebar to maximize your workspace.
+- **🎨 Modern Design**: Clean CSS that integrates seamlessly with modern Redmine themes.
+- **🌍 Localized**: Available in English and German.
+- **📱 Responsive**: Optimized for various screen sizes.
+
+## 📸 Screenshots
+
+| Wiki & Headers | Project Hierarchy |
+|:---:|:---:|
+| *(Add screenshot here)* | *(Add screenshot here)* |
+
+## 📦 Installation
+
+> [!IMPORTANT]
+> The plugin directory **MUST** be named `redmine_subnavigation` for assets to load correctly.
+
+1.  **Clone the repository** into your plugins directory:
     ```bash
     cd /path/to/redmine/plugins
     git clone https://github.com/modoq/redmine_subnavigation.git redmine_subnavigation
     ```
-    *Ensure the folder is named `redmine_subnavigation`.*
 
-2.  Install dependencies and migrate:
+2.  **Install dependencies & assets**:
     ```bash
     bundle install
     bundle exec rake redmine:plugins:migrate RAILS_ENV=production
     ```
+    *Note: This step copies the required CSS/JS assets to the public directory.*
 
-3.  Restart Redmine.
+3.  **Restart Redmine**.
 
-## Configuration
+## ✅ Compatibility
 
-Go to **Administration > Plugins > Redmine Subnavigation > Configure**.
+| Plugin Version | Redmine Version | Ruby Version |
+|:--------------:|:---------------:|:------------:|
+| **0.2.x**      | 5.0+, 6.0+      | 3.0+         |
 
-- **Navigation Mode**: Choose between partial (Wiki only) or full (Projects + Wiki) navigation.
+## ⚙️ Configuration
 
-## License
+Navigate to **Administration > Plugins > Subnavigation > Configure**.
 
-MIT License
+| Option | Description |
+|:---|:---|
+| **Disabled** | Plugin is inactive. |
+| **Wiki & Page Headers** | Sidebar shows Wiki pages and headings only. |
+| **Full Hierarchy** | Sidebar shows Projects, Wiki pages, and headings. |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please fork the repository and submit a Pull Request.
+
+1.  Fork it
+2.  Create your feature branch (`git checkout -b feature/my-new-feature`)
+3.  Commit your changes (`git commit -am 'Add some feature'`)
+4.  Push to the branch (`git push origin feature/my-new-feature`)
+5.  Create a new Pull Request
+
+## 📄 License
+
+This plugin is open source software licensed under the [MIT license](LICENSE).
