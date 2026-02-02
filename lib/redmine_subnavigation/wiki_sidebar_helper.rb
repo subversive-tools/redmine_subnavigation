@@ -124,7 +124,7 @@ module RedmineSubnavigation
       # Let's map indexes to sort them correctly if mixed.
       
       # Markdown: # to #####
-      text.scan(/^(#{1,5})\s+(.+)$/).each do |match|
+      text.scan(/^(\#{1,5})\s+(.+)$/).each do |match|
         level = match[0].length
         title = match[1].strip
         next if level > max_depth
