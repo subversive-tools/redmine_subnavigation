@@ -1,7 +1,12 @@
 /* Redmine Subnavigation - Modern & Clean */
 
 :root {
+    /* Dimensions & Spacing */
     --subnav-width: 280px;
+    --subnav-docked-width: 20px;
+    --subnav-z-index: 15;
+
+    /* Colors - Light Theme (Default) */
     --subnav-bg: #f6f6f6;
     --subnav-border: #ddd;
     --subnav-text: #333;
@@ -12,10 +17,22 @@
     --subnav-icon: #999;
     --subnav-folder: #666;
     --subnav-resizer-hover: #007bff;
-    --subnav-z-index: 100;
+
+    /* Toggle Button Colors */
+    --subnav-toggle-icon: #aeaeae;
+    --subnav-toggle-icon-hover: #444;
+    --subnav-toggle-bg-closed: rgba(0, 0, 0, 0.4);
+    --subnav-toggle-icon-closed: #666;
+
+    /* Header Colors */
+    --subnav-header-text: #666;
+    --subnav-header-hover-bg: #f0f0f0;
+
+    /* Animation & Highlight */
+    --subnav-highlight-color: rgba(255, 243, 205, 1);
 }
 
-/* Dark Mode Support (Basic) */
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     :root {
         --subnav-bg: #2d2d2d;
@@ -27,73 +44,40 @@
         --subnav-active-text: #fff;
         --subnav-icon: #aaa;
         --subnav-folder: #bbb;
+
+        --subnav-toggle-icon: #888;
+        --subnav-toggle-icon-hover: #fff;
+        --subnav-toggle-bg-closed: rgba(255, 255, 255, 0.1);
+        --subnav-toggle-icon-closed: #eee;
+
+        --subnav-header-text: #aaa;
+        --subnav-header-hover-bg: #333;
+
+        --subnav-highlight-color: rgba(255, 215, 0, 0.3);
     }
 }
 
-/* GLOBAL HEIGHT FIXES */
+/* Global Height Fixes */
 html,
 body {
     height: 100%;
 }
 
-/* CSS GRID LAYOUT on #wrapper */
+/* 
+   CSS Grid Layout on #wrapper 
+   Redefines the main layout to accomodate the sidebar 
+*/
 body.has-mini-wiki-sidebar #wrapper {
     min-height: 100vh;
     display: grid !important;
     overflow: visible !important;
-    /* CRITICAL for sticky sidebar */
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto 1fr auto;
 }
 
-/* ... (skipping unchanged parts) ... */
+/* Grid Areas Configuration based on Sidebar Mode */
 
-/* Toggle Button Styling */
-.mini-wiki-sidebar-toggle {
-    cursor: pointer;
-    font-size: 1.2rem;
-    color: #aeaeae;
-    background: transparent;
-    border: none;
-    padding: 4px 8px;
-    z-index: 1005;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* Absolute relative to the STICKY Sidebar (default) */
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-/* When sidebar acts as a sibling overlapping */
-body:not(.mini-wiki-sidebar-closed) .mini-wiki-sidebar-toggle {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 18px;
-    height: 12px;
-    color: #999;
-}
-
-/* When sidebar is closed, button needs to be positioned nicely */
-body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
-    /* FORCE FIXED POSITIONING to escape any container clipping */
-    position: fixed !important;
-    top: 10px !important;
-    left: 10px !important;
-    right: auto !important;
-    width: 30px;
-    height: 30px;
-    color: #f8f8f8;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 3px;
-    z-index: 99999;
-    /* Super high z-index */
-}
-
-/* MODE: Project Wiki (Full Height) */
+/* Mode: Project Wiki (Full Height) - Sidebar spans from below top-menu to bottom */
 body.has-mini-wiki-sidebar.mini-sidebar-mode-project_wiki #wrapper {
     grid-template-areas:
         "top top"
@@ -102,7 +86,7 @@ body.has-mini-wiki-sidebar.mini-sidebar-mode-project_wiki #wrapper {
         "side footer";
 }
 
-/* MODE: Wiki Only (Below Header) */
+/* Mode: Wiki Only - Sidebar starts below the project header */
 body.has-mini-wiki-sidebar.mini-sidebar-mode-wiki #wrapper {
     grid-template-areas:
         "top top"
@@ -111,21 +95,31 @@ body.has-mini-wiki-sidebar.mini-sidebar-mode-wiki #wrapper {
         "side footer";
 }
 
-/* Assign Grid Areas */
+/* Grid Area Assignments */
+
 body.has-mini-wiki-sidebar #top-menu {
     grid-area: top;
-    width: auto !important;
+    width: 100% !important;
+    max-width: 100vw;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 body.has-mini-wiki-sidebar #header {
     grid-area: header;
-    width: auto;
+    width: auto !important;
+    /* Auto allows it to fill grid cell without forcing width */
+    max-width: 100%;
+    overflow-x: clip;
+    overflow-y: visible;
 }
 
 body.has-mini-wiki-sidebar #main {
     grid-area: main;
-    width: auto !important;
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
 }
 
 body.has-mini-wiki-sidebar #footer {
@@ -140,48 +134,62 @@ body.has-mini-wiki-sidebar #footer {
     min-width: var(--subnav-width);
     background-color: var(--subnav-bg);
     border-right: 1px solid var(--subnav-border);
-    padding: 40px 15px 15px 15px;
+    padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    height: auto;
-    /* Was 100%, but needs auto/fit-content for sticky to work if parent is tall */
-    align-self: start;
-    /* Ensure it doesn't stretch to full grid height */
+    height: 100vh;
     min-height: 0;
+    align-self: start;
     position: sticky;
     top: 0;
     max-height: 100vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Scrollbar is on inner content */
     transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease, margin 0.3s ease;
     z-index: var(--subnav-z-index);
 }
 
+/* Inner scrollable content */
+.mini-wiki-sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    width: 100%;
+    padding: 26px 15px 15px 4px;
+    box-sizing: border-box;
+}
+
+/* Disable transitions during resizing to prevent lag */
 #mini-wiki-sidebar.resizing-active {
     transition: none !important;
 }
 
-/* Collapsed State */
-/* Collapsed State */
+/* 
+   Collapsed State (Docked)
+   Shows a thin strip with the toggle button
+*/
 #mini-wiki-sidebar.collapsed,
 body.mini-wiki-sidebar-closed #mini-wiki-sidebar {
-    width: 0 !important;
-    min-width: 0 !important;
+    width: var(--subnav-docked-width) !important;
+    min-width: var(--subnav-docked-width) !important;
     padding: 0 !important;
-    border-right: none !important;
+    border-right: 1px solid var(--subnav-border) !important;
     margin: 0 !important;
-    overflow: visible !important;
-    background-color: transparent;
-    /* Ensure no bg when closed */
+    overflow: hidden !important;
+    background-color: var(--subnav-bg) !important;
+    z-index: var(--subnav-z-index);
 }
 
-/* Toggle Button */
+/* Use flexbox for the toggle when closed to center it */
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
     visibility: visible !important;
     opacity: 1 !important;
     display: flex !important;
 }
 
-/* Hide inner content when closed */
+/* Hide all sidebar content when closed */
 body.mini-wiki-sidebar-closed #mini-wiki-sidebar .mini-sidebar-content,
 body.mini-wiki-sidebar-closed #mini-wiki-sidebar .wiki-sidebar-header,
 body.mini-wiki-sidebar-closed #mini-wiki-sidebar #mini-sidebar-resizer,
@@ -190,81 +198,90 @@ body.mini-wiki-sidebar-closed #mini-wiki-sidebar ul {
     opacity: 0 !important;
 }
 
-/* Toggle Button Styling */
+/* 
+   Toggle Button Styling 
+*/
 .mini-wiki-sidebar-toggle {
     cursor: pointer;
     font-size: 1.2rem;
-    color: #aeaeae;
+    color: var(--subnav-toggle-icon);
     background: transparent;
     border: none;
-    padding: 4px 8px;
+    padding: 0;
     z-index: 1005;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Absolute relative to the STICKY Sidebar */
     position: absolute;
     top: 0;
     right: 0;
 }
 
-/* When sidebar acts as a sibling overlapping */
+/* Open State: Absolute positioned icon inside the sidebar */
 body:not(.mini-wiki-sidebar-closed) .mini-wiki-sidebar-toggle {
     position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 18px;
-    height: 12px;
-    color: #999;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    color: var(--subnav-icon);
 }
 
-/* When sidebar is closed, button needs to be positioned nicely */
+/* Closed State: Centered icon in the docked strip */
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
-    /* Since sidebar width is 0, we position relative to it */
-    position: absolute;
-    top: 10px;
-    right: auto;
-    left: 10px;
-    /* Push it out a bit */
+    position: absolute !important;
+    top: 10px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
     width: 30px;
     height: 30px;
-    color: #f8f8f8;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 3px;
+    color: var(--subnav-toggle-icon-closed);
+    background: transparent !important;
+    border-radius: 4px;
+    box-shadow: none !important;
 }
 
-/* Override styling for different modes not really needed if sticky works */
+/* Wiki Mode Specific Override */
 body.mini-wiki-sidebar-closed.mini-sidebar-mode-wiki .mini-wiki-sidebar-toggle {
-    /* If header is tall, sticky ensures it stays put relative to grid area */
-    /* top: 120px; <-- Remove hardcoded offset, rely on sticky */
-    color: #333;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid #ddd;
+    position: absolute !important;
+    top: 10px !important;
+    left: 50% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* Hover State */
+/* Hover States */
 .mini-wiki-sidebar-toggle:hover {
-    color: #444;
+    color: var(--subnav-toggle-icon-hover);
 }
 
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle:hover {
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--subnav-toggle-bg-closed);
 }
 
+/* Icon Content: Arrow when open, Hamburger when closed */
 .mini-wiki-sidebar-toggle::before {
     content: '‹';
+    /* Left Arrow */
     font-size: 24px;
-    font-weight: bold;
+    margin-left: 1rem;
 }
 
 body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle::before {
     content: '☰';
+    /* Hamburger */
     font-size: 18px;
     font-weight: normal;
+    margin-left: 1.3rem;
+    /* Adjust centering */
+    margin-bottom: 1.4rem;
 }
 
-/* Content Styling */
+/* 
+   Navigation Tree Styling 
+*/
 #mini-wiki-sidebar ul {
     list-style-type: none;
     padding-left: 0;
@@ -272,7 +289,6 @@ body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle::before {
 }
 
 #mini-wiki-sidebar li {
-    margin-bottom: 2px;
     position: relative;
     display: flex !important;
     flex-wrap: wrap;
@@ -286,7 +302,8 @@ a.wiki-page-link {
     color: var(--subnav-text);
     text-decoration: none;
     border-radius: 4px;
-    font-weight: 500;
+    font-weight: normal;
+    font-size: 0.9rem;
     line-height: 1.4;
     flex: 1;
     min-width: 0;
@@ -298,19 +315,16 @@ a.wiki-page-link {
 a.wiki-page-link:hover {
     background-color: var(--subnav-hover-bg);
     color: var(--subnav-hover-text);
-    text-decoration: none;
 }
 
 a.wiki-page-link.active {
     background-color: var(--subnav-active-bg);
     color: var(--subnav-active-text);
-    font-weight: bold;
-    text-decoration: none;
 }
 
-/* Type Icons */
+/* Project Icons */
 a.wiki-page-link.type-project {
-    font-weight: 600;
+    font-weight: normal;
 }
 
 a.wiki-page-link.type-project::before {
@@ -320,6 +334,7 @@ a.wiki-page-link.type-project::before {
     opacity: 0.8;
 }
 
+/* Page Icons */
 a.wiki-page-link.type-page {
     font-weight: 400;
 }
@@ -332,47 +347,68 @@ a.wiki-page-link.type-page::before {
     opacity: 0.7;
 }
 
-/* Page Icon Display Rule Removed based on user request */
+/* Container for label and icon alignment */
+.node-label-container {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 2px;
+}
 
-/* Expand Icons */
-.expand-icon {
+/* Expand/Collapse Icons */
+.expand-icon,
+.expand-icon-spacer {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     width: 24px;
     height: 24px;
+    flex-shrink: 0;
+}
+
+.expand-icon {
     cursor: pointer;
     color: var(--subnav-icon);
-    flex-shrink: 0;
     font-size: 1.5rem;
     line-height: 1;
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+.expand-icon:hover {
+    color: var(--subnav-text);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+.expand-icon-spacer {
+    pointer-events: none;
 }
 
 .expand-icon::before {
     content: '▸';
 }
 
-li.expanded>.expand-icon::before {
+/* Expanded State */
+li.expanded>.node-label-container>.expand-icon::before {
     content: '▾';
 }
 
-/* Headers (H2) */
+/* 
+   Table of Contents (Headers) Styling 
+*/
 ul.wiki-page-headers {
     display: none;
     width: 100%;
-    padding-left: 34px !important;
-    margin: 2px 0 !important;
-}
-
-body.mini-wiki-sidebar-closed.mini-sidebar-mode-project_wiki #header {
-    padding-left: 45px !important;
-    box-sizing: border-box;
+    padding-left: 16px !important;
+    margin: 1px 0 !important;
 }
 
 a.wiki-header-link {
-    color: #666;
+    color: var(--subnav-header-text);
     font-size: 0.9rem;
-    padding: 2px 4px 2px 18px;
+    font-weight: normal;
+    padding: 2px 4px 2px 16px;
     position: relative;
     text-decoration: none;
     line-height: 1.4;
@@ -382,90 +418,77 @@ a.wiki-header-link {
     overflow: hidden;
     white-space: normal;
     word-break: break-word;
+    /* Wrap long words */
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
 }
 
-/* Indentation for Header Levels */
+/* Header Levels Indentation */
 a.wiki-header-link.wiki-header-h1 {
     padding-left: 12px;
-    font-weight: 600;
 }
 
 a.wiki-header-link.wiki-header-h1::before {
     left: 0px;
 }
 
+/* Levels H2-H5 share base styling, distinct visual hierarchy via opacity/size if needed */
 a.wiki-header-link.wiki-header-h2 {
-    padding-left: 20px;
-}
-
-a.wiki-header-link.wiki-header-h2::before {
-    left: 8px;
+    font-weight: 500;
 }
 
 a.wiki-header-link.wiki-header-h3 {
-    padding-left: 28px;
-    color: #777;
-    font-size: 0.85rem;
-}
-
-a.wiki-header-link.wiki-header-h3::before {
-    left: 16px;
+    opacity: 0.9;
 }
 
 a.wiki-header-link.wiki-header-h4 {
-    padding-left: 36px;
-    color: #888;
-    font-size: 0.8rem;
-}
-
-a.wiki-header-link.wiki-header-h4::before {
-    left: 24px;
+    opacity: 0.8;
 }
 
 a.wiki-header-link.wiki-header-h5 {
-    padding-left: 44px;
-    color: #999;
-    font-size: 0.8rem;
+    opacity: 0.7;
 }
 
-a.wiki-header-link.wiki-header-h5::before {
-    left: 32px;
-}
-
+/* Header Links Hover */
 a.wiki-header-link:hover {
     color: var(--subnav-resizer-hover);
-    background-color: #f0f0f0;
+    background-color: var(--subnav-header-hover-bg);
     border-radius: 4px;
 }
 
+/* Header Paragraph Icon */
 a.wiki-header-link::before {
     content: '¶';
     position: absolute;
     left: 4px;
     top: 2px;
-    color: #999;
+    color: var(--subnav-icon);
     font-weight: normal;
     font-size: 0.85em;
     line-height: 1.4;
 }
 
-/* Nested Lists */
+/* Nested List Logic */
 #mini-wiki-sidebar li>ul {
     display: none;
     width: 100%;
-    padding-left: 20px;
+    padding-left: 14px;
 }
 
 #mini-wiki-sidebar li.expanded>ul {
     display: block;
 }
 
-/* Resizer Handle */
+/* 
+   Resizer Handle 
+*/
 .mini-wiki-sidebar-resizer {
     position: absolute;
     top: 0;
-    right: 0;
+    right: -3px;
+    /* Centered on border (5px width / 2 offset) */
     width: 5px;
     height: 100%;
     cursor: col-resize;
@@ -479,11 +502,13 @@ a.wiki-header-link::before {
     background-color: var(--subnav-resizer-hover);
 }
 
-/* MOBILE / RESPONSIVE OVERLAY */
+/* 
+   Mobile / Responsive Overlay 
+*/
 @media (max-width: 768px) {
     body.has-mini-wiki-sidebar #wrapper {
         display: block !important;
-        /* Reset Grid on mobile */
+        /* Reset Grid */
     }
 
     #mini-wiki-sidebar {
@@ -491,7 +516,6 @@ a.wiki-header-link::before {
         left: 0;
         top: 0;
         bottom: 0;
-        /* Start hidden/collapsed off-screen or 0 width */
         z-index: 9999;
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
     }
@@ -502,7 +526,7 @@ a.wiki-header-link::before {
         border: none;
     }
 
-    /* Adjust toggle button for mobile to be always visible and touch-friendly */
+    /* Mobile Toggle Button */
     .mini-wiki-sidebar-toggle {
         font-size: 1.5rem;
         padding: 10px;
@@ -521,35 +545,76 @@ a.wiki-header-link::before {
     }
 }
 
-/* Header Highlighting (Active State) */
+/* 
+   Active State & Highlighting 
+*/
 a.wiki-header-link.active {
     color: var(--subnav-active-text) !important;
     background-color: var(--subnav-active-bg);
-    border-radius: 0 4px 4px 0;
-    border-left: 3px solid #007bff;
-    /* Visual Indicator */
+    border-radius: 4px;
+    border-left: none;
     font-weight: 600;
 }
 
-/* Content Header Highlight Animation */
+a.wiki-header-link.active::before {
+    color: var(--subnav-active-text) !important;
+    opacity: 1;
+    padding-top: 1px;
+}
+
+/* Fade animation for target highlight (e.g. anchor jump) */
 @keyframes target-fade {
     0% {
-        background-color: rgba(255, 243, 205, 0);
+        background-color: transparent;
     }
 
     10% {
-        background-color: rgba(255, 243, 205, 1);
+        background-color: var(--subnav-highlight-color);
         border-radius: 4px;
         padding-left: 5px;
         margin-left: -5px;
-        box-shadow: 0 0 0 5px rgba(255, 243, 205, 1);
+        box-shadow: 0 0 0 5px var(--subnav-highlight-color);
     }
 
     100% {
-        background-color: rgba(255, 243, 205, 0);
+        background-color: transparent;
     }
 }
 
 .wiki-header-highlight-target {
     animation: target-fade 2s ease-out;
+}
+
+/* 
+   Feature: Hide Breadcrumb 
+   Applied via body class when enabled in settings
+*/
+body.mini-sidebar-hide-breadcrumb #breadcrumb,
+body.mini-sidebar-hide-breadcrumb .breadcrumb,
+body.mini-sidebar-hide-breadcrumb .breadcrumbs,
+body.mini-sidebar-hide-breadcrumb p.breadcrumb,
+body.mini-sidebar-hide-breadcrumb div.breadcrumb,
+body.mini-sidebar-hide-breadcrumb ul.breadcrumb {
+    display: none !important;
+}
+
+/* 
+   Feature: Sticky Top Menu 
+   Applied via body class when enabled in settings
+*/
+body.mini-sidebar-sticky-top-menu #top-menu {
+    position: sticky;
+    top: 0;
+    z-index: 25;
+    width: 100%;
+}
+
+body.mini-sidebar-sticky-top-menu.has-mini-wiki-sidebar #mini-wiki-sidebar {
+    top: 0;
+}
+
+/* Utility: Prevent transitions (e.g. on load) */
+.no-transition,
+.no-transition * {
+    transition: none !important;
 }
