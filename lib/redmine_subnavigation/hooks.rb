@@ -54,49 +54,62 @@ module RedmineSubnavigation
       if project
         if mode == 'project_wiki'
           # In 'project_wiki', we render the full tree (Root -> descendants).
-          # This content is identical for all subprojects of the same root 
-          # (assuming we rely on JS for active state).
-          # So we can cache by Root Project to save memory/processing.
+          # Cache by Root Project.
           root_project = project.root
           tree_project_ids = root_project.self_and_descendants.visible.pluck(:id)
           
-          # Max update of any project in the tree (renames, structure changes)
-          max_project_update = Project.where(id: tree_project_ids).maximum(:updated_on).to_i
+          # Projects: Count (detects adds/removes) AND Max Update (detects edits)
+          project_query = Project.where(id: tree_project_ids)
+          project_sig = "#{project_query.count}-#{project_query.maximum(:updated_on).to_i}"
           
-          # Max update of any wiki page in the tree (for page titles/structure)
+          # Wiki Pages: Count AND Max Update
+          # We check WikiPage (structure) and WikiContent (text)
           begin
-            max_wiki_update = WikiContent.joins(page: { wiki: :project })
-                                         .where(projects: { id: tree_project_ids })
-                                         .maximum(:updated_on).to_i
+            wiki_pages_query = WikiPage.joins(wiki: :project).where(projects: { id: tree_project_ids })
+            max_p_up = wiki_pages_query.maximum(:updated_on).to_i
+            p_count = wiki_pages_query.count
+            
+            # Content updates might not trigger Page update in some edge cases? 
+            # Usually they do, but let's be safe or just rely on Page for now to save query?
+            # Actually, moving a page updates Page. Editing text updates Page (usually).
+            # Let's keep Content check for safety if performance allows.
+            max_c_up = WikiContent.joins(page: { wiki: :project })
+                                  .where(projects: { id: tree_project_ids })
+                                  .maximum(:updated_on).to_i
+                                  
+            wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
           rescue => e
-            max_wiki_update = 0
+            wiki_sig = "0-0-0"
           end
           
-          tree_version = [max_project_update, max_wiki_update].max
+          tree_version = "#{project_sig}|#{wiki_sig}"
           cache_identifier = "root/#{root_project.id}"
         else
           # In 'wiki' mode, we render ONLY the current project's wiki.
-          # This MUST be cached by the specific Project ID.
+          project_sig = "#{project.updated_on.to_i}"
           
-          max_project_update = project.updated_on.to_i
           begin
-            # Only check THIS project's wiki
             if project.wiki
-               max_wiki_update = project.wiki.pages.joins(:content).maximum(:updated_on).to_i
+               pages = project.wiki.pages
+               p_count = pages.count
+               max_p_up = pages.maximum(:updated_on).to_i
+               max_c_up = pages.joins(:content).maximum(:updated_on).to_i
+               wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
             else
-               max_wiki_update = 0
+               wiki_sig = "0-0-0"
             end
           rescue => e
-            max_wiki_update = 0
+            wiki_sig = "0-0-0"
           end
           
-          tree_version = [max_project_update, max_wiki_update].max
+          tree_version = "#{project_sig}|#{wiki_sig}"
           cache_identifier = "project/#{project.id}"
         end
       else
         # Global Context (e.g. /projects index)
         # Renders all visible roots.
-        tree_version = Project.visible.maximum(:updated_on).to_i
+        visible_projects = Project.visible
+        tree_version = "#{visible_projects.count}-#{visible_projects.maximum(:updated_on).to_i}"
         cache_identifier = "global"
       end
 
