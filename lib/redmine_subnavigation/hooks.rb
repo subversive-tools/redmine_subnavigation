@@ -9,43 +9,113 @@ module RedmineSubnavigation
     end
 
     def view_layouts_base_body_bottom(context = {})
-      # Render Sidebar
-      return '' unless context[:project]
+      # Initialize output buffer
+      output = []
       
-      # Check if plugin is enabled/configured (simple logic for now)
-      # We use Setting.plugin_redmine_subnavigation['sidebar_mode']
-      mode = Setting.plugin_redmine_subnavigation['sidebar_mode']
-      return '' if mode.blank? || mode == 'none'
+      # 1. Global UI Features (Sticky Menu)
+      # This should apply even if the sidebar module is not active in the current project
+      settings = Setting.plugin_redmine_subnavigation
       
-      # 1. Module active in Project?
-      return '' unless context[:project].module_enabled?(:subnavigation)
+      script = String.new
+      script << 'document.body.classList.add("mini-sidebar-sticky-top-menu");' if settings['sticky_top_menu']
       
-      # 2. Context Check: "Wiki & Headings" mode -> Only on WikiController
-      if mode == 'wiki'
-        return '' unless context[:controller] && context[:controller].is_a?(WikiController)
+      unless script.empty?
+        output << "<script>#{script}</script>"
+      end
+
+      # 2. Render Sidebar (Conditional)
+      mode = settings['sidebar_mode']
+      return output.join("\n").html_safe if mode.blank? || mode == 'none'
+
+      # Determine if we should render
+      should_render = false
+      project = context[:project]
+      
+      if project
+        # Project Context
+        if project.module_enabled?(:subnavigation)
+          if mode == 'wiki'
+            should_render = context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki)
+          else
+            should_render = true
+          end
+        end
+      else
+        # Global Context (e.g. /projects)
+        # Only render if mode is 'project_wiki' and we are on the projects index
+        if mode == 'project_wiki' && context[:controller].is_a?(ProjectsController) && context[:request].path == '/projects'
+          should_render = true
+        end
       end
       
-      # Ensure wiki module is enabled if we are in wiki mode (redundant with above but safe)
-      return '' if mode == 'wiki' && !context[:project].module_enabled?(:wiki)
+      return output.join("\n").html_safe unless should_render
 
-      # Cache key to prevent rendering bottlenecks
-      # Includes: Project ID, Project update time, User ID (permissions), and Mode
+      # Cache Strategy
+      if project
+        if mode == 'project_wiki'
+          # In 'project_wiki', we render the full tree (Root -> descendants).
+          # This content is identical for all subprojects of the same root 
+          # (assuming we rely on JS for active state).
+          # So we can cache by Root Project to save memory/processing.
+          root_project = project.root
+          tree_project_ids = root_project.self_and_descendants.visible.pluck(:id)
+          
+          # Max update of any project in the tree (renames, structure changes)
+          max_project_update = Project.where(id: tree_project_ids).maximum(:updated_on).to_i
+          
+          # Max update of any wiki page in the tree (for page titles/structure)
+          begin
+            max_wiki_update = WikiContent.joins(page: { wiki: :project })
+                                         .where(projects: { id: tree_project_ids })
+                                         .maximum(:updated_on).to_i
+          rescue => e
+            max_wiki_update = 0
+          end
+          
+          tree_version = [max_project_update, max_wiki_update].max
+          cache_identifier = "root/#{root_project.id}"
+        else
+          # In 'wiki' mode, we render ONLY the current project's wiki.
+          # This MUST be cached by the specific Project ID.
+          
+          max_project_update = project.updated_on.to_i
+          begin
+            # Only check THIS project's wiki
+            if project.wiki
+               max_wiki_update = project.wiki.pages.joins(:content).maximum(:updated_on).to_i
+            else
+               max_wiki_update = 0
+            end
+          rescue => e
+            max_wiki_update = 0
+          end
+          
+          tree_version = [max_project_update, max_wiki_update].max
+          cache_identifier = "project/#{project.id}"
+        end
+      else
+        # Global Context (e.g. /projects index)
+        # Renders all visible roots.
+        tree_version = Project.visible.maximum(:updated_on).to_i
+        cache_identifier = "global"
+      end
+
       cache_key = [
         'redmine_subnavigation',
         'sidebar',
-        context[:project].id,
-        context[:project].updated_on.to_i,
-        context[:project].module_enabled?(:subnavigation),
+        cache_identifier,
+        tree_version,
         User.current.id,
-        mode
+        mode,
+        settings['header_max_depth']
       ].join('/')
 
       sidebar_content = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
-        render_sidebar_navigation(context[:project], mode)
+        render_sidebar_navigation(project, mode)
       end
-      return '' if sidebar_content.empty?
+      
+      return output.join("\n").html_safe if sidebar_content.empty?
 
-      output = []
       output << <<~HTML
         <div id="mini-wiki-sidebar" class="mini-wiki-sidebar">
           <div class="mini-wiki-sidebar-toggle" onclick="toggleWikiSidebar()">
@@ -58,6 +128,14 @@ module RedmineSubnavigation
         <script>
           document.body.classList.add('has-mini-wiki-sidebar');
           document.body.classList.add('mini-sidebar-mode-#{mode}');
+          
+          // Debugging
+          console.log('Subnav Mode:', '#{mode}', 'Hide Breadcrumb:', '#{settings['hide_breadcrumb']}');
+
+          #{ 
+            should_hide = (settings['hide_breadcrumb'].to_s == '1' || settings['hide_breadcrumb'] == true) && mode == 'project_wiki'
+            should_hide ? 'document.body.classList.add("mini-sidebar-hide-breadcrumb");' : '' 
+          }
         </script>
       HTML
       output.join("\n").html_safe

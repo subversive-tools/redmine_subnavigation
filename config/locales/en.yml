@@ -5,3 +5,15 @@ en:
   label_subnav_wiki: "Wiki & Headings"
   label_subnav_project_wiki: "Full Hierarchy (Projects, Wiki & Headings)"
   label_subnav_header_max_depth: "Max Headings Depth"
+  label_subnav_hide_breadcrumb: "Hide Breadcrumb Trail"
+  label_subnav_sticky_top_menu: "Sticky Top Menu"
+  text_subnav_mode_tooltip: "Selects the scope of the sidebar. 'Complete Hierarchy' shows project structure and wiki pages, 'Wiki & Headings' only wiki content."
+  text_subnav_depth_tooltip: "Determines how deep headers (h1, h2, etc.) are shown in the navigation."
+  text_subnav_breadcrumb_tooltip: "Hides the standard Redmine breadcrumb navigation to save space. Only active in 'Complete Hierarchy' mode."
+  text_subnav_sticky_menu_tooltip: "Fixes the top Redmine menu when scrolling so it remains accessible."
+  
+  label_subnav_tips: "Tips & Tricks"
+  text_subnav_tip_recursive_toggle: "Hold the <b>Alt / Option</b> key and click the triangle to expand or collapse all sub-items at once."
+  title_subnav_expand_collapse: "Click to toggle (Alt+Click for recursive)"
+
+

@@ -6,10 +6,32 @@
         [l(:label_subnav_wiki), 'wiki'], 
         [l(:label_subnav_project_wiki), 'project_wiki']
       ], @settings['sidebar_mode']) %>
+  <em class="info"><%= I18n.t(:text_subnav_mode_tooltip) %></em>
 </p>
 
 <p>
   <label><%= I18n.t(:label_subnav_header_max_depth) %></label>
   <%= select_tag 'settings[header_max_depth]', 
-      options_for_select((1..5).to_a, @settings['header_max_depth'].to_i) %>
+      options_for_select((0..5).to_a, @settings['header_max_depth'].to_i) %>
+  <em class="info"><%= I18n.t(:text_subnav_depth_tooltip) %></em>
 </p>
+
+<p>
+  <label><%= I18n.t(:label_subnav_hide_breadcrumb) %></label>
+  <%= check_box_tag 'settings[hide_breadcrumb]', 1, @settings['hide_breadcrumb'] %>
+  <em class="info"><%= I18n.t(:text_subnav_breadcrumb_tooltip) %></em>
+</p>
+
+<p>
+  <label><%= I18n.t(:label_subnav_sticky_top_menu) %></label>
+  <%= check_box_tag 'settings[sticky_top_menu]', 1, @settings['sticky_top_menu'] %>
+  <em class="info"><%= I18n.t(:text_subnav_sticky_menu_tooltip) %></em>
+</p>
+
+<fieldset class="box">
+  <legend><%= I18n.t(:label_subnav_tips) %></legend>
+  <p>
+    <span class="icon icon-help"></span>
+    <%= I18n.t(:text_subnav_tip_recursive_toggle).html_safe %>
+  </p>
+</fieldset>
