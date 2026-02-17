@@ -7,10 +7,12 @@ de:
   label_subnav_header_max_depth: "Maximale Überschriftentiefe"
   label_subnav_hide_breadcrumb: "Breadcrumb ausblenden im Modus 'komplette Hierarchie'"
   label_subnav_sticky_top_menu: "Hauptmenü am oberen Rand fixieren"
+  label_subnav_show_on_globally: "Auf oberster Ebene anzeigen"
   text_subnav_mode_tooltip: "Wählt den Umfang der Seitenleiste. 'Komplette Hierarchie' zeigt die Projektstruktur und Wiki-Seiten, 'Wiki & Überschriften' nur Wiki-Inhalte."
   text_subnav_depth_tooltip: "Bestimmt, wie tief Überschriften (h1, h2, etc.) in der Navigation angezeigt werden."
   text_subnav_breadcrumb_tooltip: "Blendet die Standard-Breadcrumb-Navigation von Redmine aus, um mehr Platz zu schaffen. Nur aktiv im Modus 'Komplette Hierarchie'."
   text_subnav_sticky_menu_tooltip: "Fixiert das obere Redmine-Menü beim Scrollen, damit es immer erreichbar bleibt."
+  text_subnav_show_on_globally_tooltip: "Zeigt die Seitenleiste auch auf globalen Seiten wie /projects, /activity, /issues etc. an."
   
   label_subnav_tips: "Tipps & Tricks"
   text_subnav_tip_recursive_toggle: "Halten Sie die <b>Alt / Option</b>-Taste gedrückt und klicken Sie auf das Dreieck, um alle Unterobjekte gleichzeitig ein- oder auszuklappen."

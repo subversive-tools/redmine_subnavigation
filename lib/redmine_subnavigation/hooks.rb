@@ -8,6 +8,14 @@ module RedmineSubnavigation
       javascript_include_tag('wiki_sidebar', plugin: 'redmine_subnavigation')
     end
 
+    def view_layouts_base_content(context = {})
+      ''
+    end
+
+    def view_layouts_base_body_top(context = {})
+      ''
+    end
+
     def view_layouts_base_body_bottom(context = {})
       # Initialize output buffer
       output = []
@@ -23,7 +31,7 @@ module RedmineSubnavigation
         output << "<script>#{script}</script>"
       end
 
-      # 2. Render Sidebar (Conditional)
+      # Render Sidebar (Conditional)
       mode = settings['sidebar_mode']
       return output.join("\n").html_safe if mode.blank? || mode == 'none'
 
@@ -42,9 +50,28 @@ module RedmineSubnavigation
         end
       else
         # Global Context (e.g. /projects)
-        # Only render if mode is 'project_wiki' and we are on the projects index
+        # 1. Project Wiki Mode: Render on projects index
         if mode == 'project_wiki' && context[:controller].is_a?(ProjectsController) && context[:request].path == '/projects'
-          should_render = true
+          should_render = settings['show_on_globally']
+        end
+
+        # 2. Show on Globally Setting
+        # If enabled, render on other global pages (but not if we are already rendering)
+        if !should_render && settings['show_on_globally']
+          # Exclusions: Do not show on Admin, Login, My Page, Users list, or Settings
+          path = context[:request].path
+          controller_name = context[:controller].controller_name
+          
+          excluded_paths = ['/admin', '/login', '/account', '/my', '/settings', '/users']
+          is_excluded = excluded_paths.any? { |p| path.start_with?(p) } ||
+                        ['admin', 'account', 'my', 'settings', 'users'].include?(controller_name)
+
+          should_render = true unless is_excluded
+          
+          # Force for Activity if it was somehow excluded or logic failed
+          if path == '/activity'
+             should_render = true 
+          end
         end
       end
       
@@ -62,17 +89,12 @@ module RedmineSubnavigation
           project_query = Project.where(id: tree_project_ids)
           project_sig = "#{project_query.count}-#{project_query.maximum(:updated_on).to_i}"
           
-          # Wiki Pages: Count AND Max Update
-          # We check WikiPage (structure) and WikiContent (text)
           begin
             wiki_pages_query = WikiPage.joins(wiki: :project).where(projects: { id: tree_project_ids })
             max_p_up = wiki_pages_query.maximum(:updated_on).to_i
             p_count = wiki_pages_query.count
             
-            # Content updates might not trigger Page update in some edge cases? 
-            # Usually they do, but let's be safe or just rely on Page for now to save query?
-            # Actually, moving a page updates Page. Editing text updates Page (usually).
-            # Let's keep Content check for safety if performance allows.
+            # Content updates
             max_c_up = WikiContent.joins(page: { wiki: :project })
                                   .where(projects: { id: tree_project_ids })
                                   .maximum(:updated_on).to_i
@@ -85,7 +107,7 @@ module RedmineSubnavigation
           tree_version = "#{project_sig}|#{wiki_sig}"
           cache_identifier = "root/#{root_project.id}"
         else
-          # In 'wiki' mode, we render ONLY the current project's wiki.
+          # In 'wiki' mode
           project_sig = "#{project.updated_on.to_i}"
           
           begin
@@ -106,8 +128,7 @@ module RedmineSubnavigation
           cache_identifier = "project/#{project.id}"
         end
       else
-        # Global Context (e.g. /projects index)
-        # Renders all visible roots.
+        # Global Context
         visible_projects = Project.visible
         tree_version = "#{visible_projects.count}-#{visible_projects.maximum(:updated_on).to_i}"
         cache_identifier = "global"

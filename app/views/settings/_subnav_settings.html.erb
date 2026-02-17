@@ -17,6 +17,12 @@
 </p>
 
 <p>
+  <label><%= I18n.t(:label_subnav_show_on_globally) %></label>
+  <%= check_box_tag 'settings[show_on_globally]', 1, @settings['show_on_globally'] %>
+  <em class="info"><%= I18n.t(:text_subnav_show_on_globally_tooltip) %></em>
+</p>
+
+<p>
   <label><%= I18n.t(:label_subnav_hide_breadcrumb) %></label>
   <%= check_box_tag 'settings[hide_breadcrumb]', 1, @settings['hide_breadcrumb'] %>
   <em class="info"><%= I18n.t(:text_subnav_breadcrumb_tooltip) %></em>

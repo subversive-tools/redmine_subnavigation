@@ -15,7 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 2. Restore state
-    const isClosed = localStorage.getItem('redmine_mini_wiki_sidebar_closed') === 'true';
+    let isClosed = localStorage.getItem('redmine_mini_wiki_sidebar_closed') === 'true';
+
+    // Force collapse on edit/update pages for WYSIWYG editor space
+    if (document.body.classList.contains('action-edit') || document.body.classList.contains('action-update')) {
+        isClosed = true;
+    }
     const storedWidth = localStorage.getItem('redmine_mini_wiki_sidebar_width');
 
     // Dynamic Height/Top Adjustment

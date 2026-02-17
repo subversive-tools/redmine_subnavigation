@@ -42,7 +42,9 @@ module RedmineSubnavigation
           html << render_project_node(root, current_project)
         else
           # Render ALL visible roots (Global View)
-          Project.visible.roots.order(:name).each do |root|
+          roots = Project.visible.roots.order(:name)
+          Rails.logger.info "[Subnavigation] Rendering global tree. Visible roots: #{roots.count}"
+          roots.each do |root|
              html << render_project_node(root, nil)
           end
         end
@@ -73,7 +75,11 @@ module RedmineSubnavigation
 
        # Project Link
        # Active class is handled by JS based on current URL to allow caching across project views
-       html << link_to(project.name, smart_project_path(project), class: "wiki-page-link type-project")
+       project_name = project.name
+       icon = render_subnav_icon(:folder)
+       link_content = "#{icon}<span>#{project_name}</span>".html_safe
+       
+       html << link_to(link_content, smart_project_path(project), class: "wiki-page-link type-project")
        html << '</div>'
        
        # Render Wiki Tree
@@ -137,9 +143,10 @@ module RedmineSubnavigation
 
     def link_to_page(page)
       display_title = get_display_title(page)
+      icon = render_subnav_icon(:page)
       
       # Basic link, improvements like "active" class can be handled by JS matching URL
-      "<a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title)}\" class=\"wiki-page-link type-page\" data-title=\"#{page.title}\">#{display_title}</a>"
+      "<a href=\"#{Rails.application.routes.url_helpers.project_wiki_page_path(page.project, page.title)}\" class=\"wiki-page-link type-page\" data-title=\"#{page.title}\">#{icon}<span>#{display_title}</span></a>"
     end
 
     # Renders headers in a nested tree with expand/collapse capability
@@ -273,6 +280,14 @@ module RedmineSubnavigation
     # However, if we want to support "Activity as fallback", we'd need to check if user can view overview.
     # allowed_to?(:view_project, project) usually covers Overview.
     
+    def render_subnav_icon(type)
+      icon_id = type == :folder ? 'icon--folder' : 'icon--wiki-page'
+      # Use dynamic path to the localized asset
+      svg_path = image_path("icons.svg", plugin: "redmine_subnavigation")
+      
+      "<svg class=\"subnav-icon subnav-icon-#{type}\" aria-hidden=\"true\"><use href=\"#{svg_path}##{icon_id}\"></use></svg>"
+    end
+
     def smart_project_path(project)
       # Check if user has permission to see the project (Overview)
       if User.current.allowed_to?(:view_project, project)

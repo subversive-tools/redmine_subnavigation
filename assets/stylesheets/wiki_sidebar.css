@@ -325,27 +325,51 @@ a.wiki-page-link.active {
 /* Project Icons */
 a.wiki-page-link.type-project {
     font-weight: normal;
+    display: flex;
+    align-items: center;
 }
 
+/* Remove emoji */
 a.wiki-page-link.type-project::before {
-    content: '📂';
-    margin-right: 6px;
-    font-weight: normal;
-    opacity: 0.8;
+    content: none !important;
 }
 
 /* Page Icons */
 a.wiki-page-link.type-page {
     font-weight: 400;
+    display: flex;
+    align-items: center;
 }
 
+/* Remove emoji */
 a.wiki-page-link.type-page::before {
-    content: '📄';
-    margin-right: 6px;
-    font-weight: normal;
-    font-size: 0.9em;
-    opacity: 0.7;
+    content: none !important;
 }
+
+/* SVG Icon Styling */
+.subnav-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    flex-shrink: 0;
+    color: var(--subnav-icon);
+}
+
+.subnav-icon-folder {
+    color: var(--subnav-folder);
+}
+
+a.wiki-page-link:hover .subnav-icon {
+    color: var(--subnav-hover-text);
+}
+
+a.wiki-page-link.active .subnav-icon {
+    color: var(--subnav-active-text);
+}
+
 
 /* Container for label and icon alignment */
 .node-label-container {
@@ -610,7 +634,8 @@ body.mini-sidebar-sticky-top-menu #top-menu {
     box-sizing: border-box;
     padding-top: 6px;
     padding-bottom: 6px;
-    padding-right: 15px; /* Ensure right spacing */
+    padding-right: 15px;
+    /* Ensure right spacing */
 }
 
 body.mini-sidebar-sticky-top-menu.has-mini-wiki-sidebar #mini-wiki-sidebar {

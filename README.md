@@ -1,14 +1,12 @@
 # Redmine Subnavigation Plugin
 
-![Version](https://img.shields.io/badge/version-0.5.3-blue.svg)
-![Redmine](https://img.shields.io/badge/Redmine-5.0%20%7C%206.0-red.svg?logo=redmine)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-0.5.4-blue.svg)
+![Redmine](https://img.shields.io/badge/redmine-5.0%20%7C%206.0-red.svg?style=flat-square&logo=redmine)
+![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)
 
 **A powerful, collapsible sidebar navigation tree for Redmine.**
 
 Transform your Redmine experience with a clean, hierarchical view of your Projects, Wiki pages, and Wiki Headings. Designed for productivity and ease of use.
-
----
 
 ## Features
 
@@ -23,12 +21,6 @@ Transform your Redmine experience with a clean, hierarchical view of your Projec
 - **Cascading Activation**: Automatically enables/disables the subnavigation module in subprojects when changed in a parent project (in 'Full Hierarchy' mode).
 - **Modern Design**: Clean CSS using CSS variables, integrating seamlessly with modern Redmine themes (Light & Dark mode support).
 - **Localized**: Available in English and German.
-
-## Screenshots
-
-| Wiki & Headers | Project Hierarchy |
-|:---:|:---:|
-| *(Add screenshot here)* | *(Add screenshot here)* |
 
 ## Installation
 
@@ -46,19 +38,12 @@ Transform your Redmine experience with a clean, hierarchical view of your Projec
     bundle install
     bundle exec rake redmine:plugins:migrate RAILS_ENV=production
     ```
-    *Note: This step copies the required CSS/JS assets to the public directory.*
 
 3.  **Restart Redmine**.
 
-## Compatibility
-
-| Plugin Version | Redmine Version | Ruby Version |
-|:--------------:|:---------------:|:------------:|
-| **0.5.x**      | 5.0+, 6.0+      | 3.0+         |
-
 ## Configuration
 
-Navigate to **Administration > Plugins > Subnavigation > Configure**.
+Navigate to **Administration > Plugins > Redmine Subnavigation > Configure**.
 
 ### Permissions
 
@@ -72,15 +57,14 @@ To control who can see the sidebar, use the Redmine **Roles and permissions** se
 > [!NOTE]
 > To enable the sidebar for users who are **not logged in**, you must check the permission for the **Anonymous** role. The **Non member** role only applies to logged-in users who are not members of the current project.
 
-### Settings
-
+### General Settings
 
 | Option | Description |
 |:---|:---|
 | **Sidebar Mode** | |
 | *Disabled* | Plugin is inactive. |
-| *Wiki & Headings* | Sidebar shows Wiki pages and headings for the current project only. **Best for large instances where project hierarchy is too complex.** (Uses Project-specific caching) |
-| *Full Hierarchy* | Sidebar shows the complete Project tree, Wiki pages, and headings. **Enables cascading module activation.** (Uses Root-Project caching for performance) |
+| *Wiki & Headings* | Sidebar shows Wiki pages and headings for the current project only. **Best for large instances.** |
+| *Full Hierarchy* | Sidebar shows the complete Project tree, Wiki pages, and headings. **Enables cascading module activation.** |
 | **Max Headings Depth** | Maximum depth of headings (h1, h2, h3, etc.) to show in the automatic Table of Contents. |
 | **Hide Breadcrumb** | Hides the default Redmine breadcrumb trail (e.g., `Project > Wiki > Page`) for a cleaner header. *Only active in 'Full Hierarchy' mode.* |
 | **Sticky Top Menu** | Fixes the black top menu bar to the top of the screen when scrolling. |
