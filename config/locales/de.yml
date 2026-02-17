@@ -15,3 +15,5 @@ de:
   label_subnav_tips: "Tipps & Tricks"
   text_subnav_tip_recursive_toggle: "Halten Sie die <b>Alt / Option</b>-Taste gedrückt und klicken Sie auf das Dreieck, um alle Unterobjekte gleichzeitig ein- oder auszuklappen."
   title_subnav_expand_collapse: "Klicken zum Ein-/Ausklappen (Alt+Klick für rekursiv)"
+  
+  permission_view_subnavigation: "Subnavigation anzeigen"

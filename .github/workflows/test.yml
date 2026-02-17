@@ -8,7 +8,7 @@ jobs:
     name: Redmine ${{ matrix.redmine-version }} / Ruby ${{ matrix.ruby-version }}
     strategy:
       matrix:
-        ruby-version: ['3.0', '3.1', '3.2']
+        ruby-version: ['3.1', '3.2', '3.3']
         redmine-version: ['5.0-stable', '5.1-stable', 'master']
 
     steps:
@@ -18,25 +18,31 @@ jobs:
 
     - name: Clone Redmine
       run: |
-        git clone --depth=1 --branch ${{ matrix.redmine-version }} https://github.com/redmine/redmine.git .
+        git clone --depth=1 --branch ${{ matrix.redmine-version }} https://github.com/redmine/redmine.git redmine
+
+    - name: Install Plugin
+      run: |
+        mv redmine_subnavigation redmine/plugins/
 
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true
+        working-directory: redmine
 
     - name: Install Dependencies
+      working-directory: redmine
       run: |
+        bundle config set --local without 'postgresql mysql rmagick'
         bundle install
-        # Move plugin to correct location
-        mv redmine_subnavigation plugins/
+        
         # Create database.yml (SQLite for testing)
         echo "test:
           adapter: sqlite3
           database: db/test.sqlite3" > config/database.yml
 
     - name: Run Tests
+      working-directory: redmine
       run: |
         bundle exec rake db:migrate RAILS_ENV=test
         bundle exec rake redmine:plugins:migrate RAILS_ENV=test

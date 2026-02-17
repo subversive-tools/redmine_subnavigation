@@ -1,6 +1,6 @@
 # Redmine Subnavigation Plugin
 
-![Version](https://img.shields.io/badge/version-0.5.2-blue.svg)
+![Version](https://img.shields.io/badge/version-0.5.3-blue.svg)
 ![Redmine](https://img.shields.io/badge/Redmine-5.0%20%7C%206.0-red.svg?logo=redmine)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
@@ -10,27 +10,27 @@ Transform your Redmine experience with a clean, hierarchical view of your Projec
 
 ---
 
-## 🚀 Features
+## Features
 
-- **📂 Project Hierarchy**: Navigate smoothly through projects and subprojects.
-- **📄 Wiki Tree**: Visual tree structure for all wiki pages with expand/collapse functionality.
-- **¶ Wiki Headings**: Automatic Table of Contents (h1, h2, etc.) for the current page.
-- **⚡ Collapsible Sidebar**: Toggle the sidebar to maximize your workspace.
-- **🧠 Smart State Persistence**: Remembers your sidebar width and expanded/collapsed state between page loads.
-- **✨ Recursive Expansion**: Hold `Alt` / `Option` and click a triangle to expand/collapse all nested items at once.
-- **🚫 Hide Breadcrumbs**: Optional setting to hide the Redmine breadcrumb trail for a cleaner look (Full Hierarchy mode only).
-- **📌 Sticky Top Menu**: Optional setting to keep the main Redmine menu fixed at the top while scrolling.
-- **🔄 Cascading Activation**: Automatically enables/disables the subnavigation module in subprojects when changed in a parent project (in 'Full Hierarchy' mode).
-- **🎨 Modern Design**: Clean CSS using CSS variables, integrating seamlessly with modern Redmine themes (Light & Dark mode support).
-- **🌍 Localized**: Available in English and German.
+- **Project Hierarchy**: Navigate smoothly through projects and subprojects.
+- **Wiki Tree**: Visual tree structure for all wiki pages with expand/collapse functionality.
+- **Wiki Headings**: Automatic Table of Contents (h1, h2, etc.) for the current page.
+- **Collapsible Sidebar**: Toggle the sidebar to maximize your workspace.
+- **Smart State Persistence**: Remembers your sidebar width and expanded/collapsed state between page loads.
+- **Recursive Expansion**: Hold `Alt` / `Option` and click a triangle to expand/collapse all nested items at once.
+- **Hide Breadcrumbs**: Optional setting to hide the Redmine breadcrumb trail for a cleaner look (Full Hierarchy mode only).
+- **Sticky Top Menu**: Optional setting to keep the main Redmine menu fixed at the top while scrolling.
+- **Cascading Activation**: Automatically enables/disables the subnavigation module in subprojects when changed in a parent project (in 'Full Hierarchy' mode).
+- **Modern Design**: Clean CSS using CSS variables, integrating seamlessly with modern Redmine themes (Light & Dark mode support).
+- **Localized**: Available in English and German.
 
-## 📸 Screenshots
+## Screenshots
 
 | Wiki & Headers | Project Hierarchy |
 |:---:|:---:|
 | *(Add screenshot here)* | *(Add screenshot here)* |
 
-## 📦 Installation
+## Installation
 
 > [!IMPORTANT]
 > The plugin directory **MUST** be named `redmine_subnavigation` for assets to load correctly.
@@ -50,15 +50,30 @@ Transform your Redmine experience with a clean, hierarchical view of your Projec
 
 3.  **Restart Redmine**.
 
-## ✅ Compatibility
+## Compatibility
 
 | Plugin Version | Redmine Version | Ruby Version |
 |:--------------:|:---------------:|:------------:|
 | **0.5.x**      | 5.0+, 6.0+      | 3.0+         |
 
-## ⚙️ Configuration
+## Configuration
 
 Navigate to **Administration > Plugins > Subnavigation > Configure**.
+
+### Permissions
+
+To control who can see the sidebar, use the Redmine **Roles and permissions** settings:
+
+1.  Go to **Administration > Roles and permissions**.
+2.  Select a role (e.g., **Reporter**, **Non member**, or **Anonymous**).
+3.  Check the box for **View subnavigation** under the **Subnavigation** project module.
+4.  Save.
+
+> [!NOTE]
+> To enable the sidebar for users who are **not logged in**, you must check the permission for the **Anonymous** role. The **Non member** role only applies to logged-in users who are not members of the current project.
+
+### Settings
+
 
 | Option | Description |
 |:---|:---|
@@ -76,7 +91,7 @@ Navigate to **Administration > Plugins > Subnavigation > Configure**.
 > [!TIP]
 > **Power User Shortcut**: Hold **Alt / Option** while clicking an expand triangle to recursively expand or collapse all children.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please fork the repository and submit a Pull Request.
 
@@ -86,6 +101,6 @@ Contributions are welcome! Please fork the repository and submit a Pull Request.
 4.  Push to the branch (`git push origin feature/my-new-feature`)
 5.  Create a new Pull Request
 
-## 📄 License
+## License
 
 This plugin is open source software licensed under the [MIT license](LICENSE).

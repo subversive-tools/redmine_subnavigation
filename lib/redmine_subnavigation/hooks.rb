@@ -35,9 +35,9 @@ module RedmineSubnavigation
         # Project Context
         if project.module_enabled?(:subnavigation)
           if mode == 'wiki'
-            should_render = context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki)
+            should_render = context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
           else
-            should_render = true
+            should_render = User.current.allowed_to?(:view_subnavigation, project)
           end
         end
       else

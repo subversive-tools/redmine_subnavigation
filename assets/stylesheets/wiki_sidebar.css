@@ -607,6 +607,10 @@ body.mini-sidebar-sticky-top-menu #top-menu {
     top: 0;
     z-index: 25;
     width: 100%;
+    box-sizing: border-box;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-right: 15px; /* Ensure right spacing */
 }
 
 body.mini-sidebar-sticky-top-menu.has-mini-wiki-sidebar #mini-wiki-sidebar {

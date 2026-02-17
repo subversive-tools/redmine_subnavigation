@@ -15,5 +15,7 @@ en:
   label_subnav_tips: "Tips & Tricks"
   text_subnav_tip_recursive_toggle: "Hold the <b>Alt / Option</b> key and click the triangle to expand or collapse all sub-items at once."
   title_subnav_expand_collapse: "Click to toggle (Alt+Click for recursive)"
+  
+  permission_view_subnavigation: "View subnavigation"
 
 
