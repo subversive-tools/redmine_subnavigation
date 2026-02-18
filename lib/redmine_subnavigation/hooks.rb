@@ -87,7 +87,7 @@ module RedmineSubnavigation
             # Content updates
             max_c_up = WikiContent.joins(page: { wiki: :project })
                                   .where(projects: { id: tree_project_ids })
-                                  .maximum(:updated_on).to_i
+                                  .maximum('wiki_contents.updated_on').to_i
                                   
             wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
           rescue => e
@@ -105,7 +105,7 @@ module RedmineSubnavigation
                pages = project.wiki.pages
                p_count = pages.count
                max_p_up = pages.maximum(:updated_on).to_i
-               max_c_up = pages.joins(:content).maximum(:updated_on).to_i
+               max_c_up = WikiContent.where(page_id: pages.select(:id)).maximum(:updated_on).to_i
                wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
             else
                wiki_sig = "0-0-0"
