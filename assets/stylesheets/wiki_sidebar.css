@@ -71,7 +71,7 @@ body.has-mini-wiki-sidebar #wrapper {
     min-height: 100vh;
     display: grid !important;
     overflow: visible !important;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: var(--subnav-current-width, auto) 1fr;
     grid-template-rows: auto auto 1fr auto;
 }
 

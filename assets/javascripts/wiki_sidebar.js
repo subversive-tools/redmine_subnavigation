@@ -148,6 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (newWidth > 600) newWidth = 600;
             sidebar.style.width = newWidth + 'px';
             sidebar.style.minWidth = newWidth + 'px';
+            // Update CSS variable for Grid
+            document.documentElement.style.setProperty('--subnav-current-width', newWidth + 'px');
         });
 
         document.addEventListener('mouseup', function (e) {
@@ -158,7 +160,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.style.cursor = '';
             document.body.classList.remove('no-select');
             if (!document.body.classList.contains('mini-wiki-sidebar-closed')) {
-                localStorage.setItem('redmine_mini_wiki_sidebar_width', parseInt(sidebar.style.width));
+                const finalWidth = parseInt(sidebar.style.width);
+                localStorage.setItem('redmine_mini_wiki_sidebar_width', finalWidth);
+                document.documentElement.style.setProperty('--subnav-current-width', finalWidth + 'px');
             }
         });
 
@@ -306,6 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 sidebar.classList.remove('no-transition');
+                document.body.classList.remove('no-transition');
             });
         });
     }
@@ -544,13 +549,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!isNowClosed) {
             const stored = localStorage.getItem('redmine_mini_wiki_sidebar_width');
+            let w = '280px';
             if (stored) {
-                sidebar.style.width = stored + 'px';
-                sidebar.style.minWidth = stored + 'px';
-            } else {
-                sidebar.style.width = '280px';
-                sidebar.style.minWidth = '280px';
+                w = stored + 'px';
             }
+            sidebar.style.width = w;
+            sidebar.style.minWidth = w;
+            document.documentElement.style.setProperty('--subnav-current-width', w);
+        } else {
+            // If closed, the CSS handles width via .mini-wiki-sidebar-closed class on sidebar
+            // BUT our grid uses the variable.
+            document.documentElement.style.setProperty('--subnav-current-width', '20px');
         }
     }
 

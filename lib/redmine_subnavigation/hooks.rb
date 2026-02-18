@@ -13,69 +13,59 @@ module RedmineSubnavigation
     end
 
     def view_layouts_base_body_top(context = {})
-      ''
+      # 1. Global UI Features (Sticky Menu) - Better here than bottom for early layout
+      settings = Setting.plugin_redmine_subnavigation
+      output = []
+      
+      if settings['sticky_top_menu']
+        output << '<script>document.body.classList.add("mini-sidebar-sticky-top-menu");</script>'
+      end
+
+      # 2. Early Space Reservation for Sidebar
+      if should_render_sidebar?(context, settings)
+        output << <<~HTML.html_safe
+          <script>
+            (function() {
+              var isClosed = localStorage.getItem('redmine_mini_wiki_sidebar_closed') === 'true';
+              var storedWidth = localStorage.getItem('redmine_mini_wiki_sidebar_width');
+              var isEdit = document.body.classList.contains('action-edit') || document.body.classList.contains('action-update');
+              
+              if (isClosed || isEdit) {
+                document.body.classList.add('mini-wiki-sidebar-closed');
+                document.documentElement.style.setProperty('--subnav-current-width', '20px');
+              } else {
+                var w = storedWidth ? storedWidth + 'px' : '280px';
+                document.documentElement.style.setProperty('--subnav-current-width', w);
+              }
+              document.body.classList.add('has-mini-wiki-sidebar');
+              
+              // Mode specific class needed for grid areas
+              var mode = '#{settings['sidebar_mode']}';
+              document.body.classList.add('mini-sidebar-mode-' + mode);
+
+              var hideBreadcrumb = #{settings['hide_breadcrumb'].to_s == '1' || settings['hide_breadcrumb'] == true};
+              if (hideBreadcrumb && mode === 'project_wiki') {
+                 document.body.classList.add("mini-sidebar-hide-breadcrumb");
+              }
+              
+              // No-transition to prevent generic jumps
+              document.body.classList.add('no-transition');
+            })();
+          </script>
+        HTML
+      end
+      
+      output.join("\n").html_safe
     end
 
     def view_layouts_base_body_bottom(context = {})
-      # Initialize output buffer
-      output = []
-      
-      # 1. Global UI Features (Sticky Menu)
-      # This should apply even if the sidebar module is not active in the current project
       settings = Setting.plugin_redmine_subnavigation
       
-      script = String.new
-      script << 'document.body.classList.add("mini-sidebar-sticky-top-menu");' if settings['sticky_top_menu']
-      
-      unless script.empty?
-        output << "<script>#{script}</script>"
-      end
-
-      # Render Sidebar (Conditional)
-      mode = settings['sidebar_mode']
-      return output.join("\n").html_safe if mode.blank? || mode == 'none'
-
       # Determine if we should render
-      should_render = false
+      return '' unless should_render_sidebar?(context, settings)
+
+      mode = settings['sidebar_mode']
       project = context[:project]
-      
-      if project
-        # Project Context
-        if project.module_enabled?(:subnavigation)
-          if mode == 'wiki'
-            should_render = context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
-          else
-            should_render = User.current.allowed_to?(:view_subnavigation, project)
-          end
-        end
-      else
-        # Global Context (e.g. /projects)
-        # 1. Project Wiki Mode: Render on projects index
-        if mode == 'project_wiki' && context[:controller].is_a?(ProjectsController) && context[:request].path == '/projects'
-          should_render = settings['show_on_globally']
-        end
-
-        # 2. Show on Globally Setting
-        # If enabled, render on other global pages (but not if we are already rendering)
-        if !should_render && settings['show_on_globally']
-          # Exclusions: Do not show on Admin, Login, My Page, Users list, or Settings
-          path = context[:request].path
-          controller_name = context[:controller].controller_name
-          
-          excluded_paths = ['/admin', '/login', '/account', '/my', '/settings', '/users']
-          is_excluded = excluded_paths.any? { |p| path.start_with?(p) } ||
-                        ['admin', 'account', 'my', 'settings', 'users'].include?(controller_name)
-
-          should_render = true unless is_excluded
-          
-          # Force for Activity if it was somehow excluded or logic failed
-          if path == '/activity'
-             should_render = true 
-          end
-        end
-      end
-      
-      return output.join("\n").html_safe unless should_render
 
       # Cache Strategy
       if project
@@ -148,9 +138,11 @@ module RedmineSubnavigation
         render_sidebar_navigation(project, mode)
       end
       
-      return output.join("\n").html_safe if sidebar_content.empty?
+      return '' if sidebar_content.empty?
 
-      output << <<~HTML
+      # JS initialization is now handled up top or via wiki_sidebar.js
+      # We just output the structure
+      <<~HTML.html_safe
         <div id="mini-wiki-sidebar" class="mini-wiki-sidebar">
           <div class="mini-wiki-sidebar-toggle" onclick="toggleWikiSidebar()">
             <span class="icon"></span>
@@ -160,19 +152,55 @@ module RedmineSubnavigation
           </div>
         </div>
         <script>
-          document.body.classList.add('has-mini-wiki-sidebar');
-          document.body.classList.add('mini-sidebar-mode-#{mode}');
-          
-          // Debugging
-          console.log('Subnav Mode:', '#{mode}', 'Hide Breadcrumb:', '#{settings['hide_breadcrumb']}');
-
-          #{ 
-            should_hide = (settings['hide_breadcrumb'].to_s == '1' || settings['hide_breadcrumb'] == true) && mode == 'project_wiki'
-            should_hide ? 'document.body.classList.add("mini-sidebar-hide-breadcrumb");' : '' 
-          }
+           console.log('Subnav Mode:', '#{mode}');
         </script>
       HTML
-      output.join("\n").html_safe
+    end
+
+    private
+
+    def should_render_sidebar?(context, settings)
+      mode = settings['sidebar_mode']
+      return false if mode.blank? || mode == 'none'
+
+      project = context[:project]
+      
+      if project
+        # Project Context
+        if project.module_enabled?(:subnavigation)
+          if mode == 'wiki'
+            return context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
+          else
+            return User.current.allowed_to?(:view_subnavigation, project)
+          end
+        end
+      else
+        # Global Context (e.g. /projects)
+        # 1. Project Wiki Mode: Render on projects index
+        if mode == 'project_wiki' && context[:controller].is_a?(ProjectsController) && context[:request].path == '/projects'
+          return settings['show_on_globally']
+        end
+
+        # 2. Show on Globally Setting
+        if settings['show_on_globally']
+          # Exclusions: Do not show on Admin, Login, My Page, Users list, or Settings
+          path = context[:request].path
+          controller_name = context[:controller].controller_name
+          
+          excluded_paths = ['/admin', '/login', '/account', '/my', '/settings', '/users']
+          is_excluded = excluded_paths.any? { |p| path.start_with?(p) } ||
+                        ['admin', 'account', 'my', 'settings', 'users'].include?(controller_name)
+
+          return true unless is_excluded
+          
+          # Force for Activity if it was somehow excluded or logic failed
+          if path == '/activity'
+             return true 
+          end
+        end
+      end
+      
+      false
     end
   end
 end
