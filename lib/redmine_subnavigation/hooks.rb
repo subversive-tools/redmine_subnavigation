@@ -187,9 +187,20 @@ module RedmineSubnavigation
           path = context[:request].path
           controller_name = context[:controller].controller_name
           
-          excluded_paths = ['/admin', '/login', '/account', '/my', '/settings', '/users']
+          excluded_paths = [
+            '/admin', '/login', '/account', '/my', '/settings', '/users',
+            '/groups', '/roles', '/trackers', '/auth_sources', '/enumerations',
+            '/issue_statuses', '/workflows', '/custom_fields'
+          ]
+          
+          excluded_controllers = [
+            'admin', 'account', 'my', 'settings', 'users', 'groups', 'roles', 
+            'trackers', 'auth_sources', 'enumerations', 'issue_statuses', 
+            'workflows', 'custom_fields'
+          ]
+
           is_excluded = excluded_paths.any? { |p| path.start_with?(p) } ||
-                        ['admin', 'account', 'my', 'settings', 'users'].include?(controller_name)
+                        excluded_controllers.include?(controller_name)
 
           return true unless is_excluded
           
