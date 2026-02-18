@@ -176,7 +176,15 @@ module RedmineSubnavigation
         # Project Context
         if project.module_enabled?(:subnavigation)
           if mode == 'wiki'
-            return context[:controller].is_a?(WikiController) && project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
+            # Only render if we are in WikiController AND page exists (not new)
+            is_wiki = context[:controller].is_a?(WikiController)
+            return false unless is_wiki
+
+            # Check if page is new/empty to avoid empty sidebar gap
+            page = context[:controller].instance_variable_get(:@page)
+            return false if page && (page.new_record? || page.content.nil?)
+
+            return project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
           else
             return User.current.allowed_to?(:view_subnavigation, project)
           end
