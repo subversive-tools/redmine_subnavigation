@@ -107,8 +107,7 @@ body.has-mini-wiki-sidebar #top-menu {
 
 body.has-mini-wiki-sidebar #header {
     grid-area: header;
-    width: auto !important;
-    /* Auto allows it to fill grid cell without forcing width */
+    /* width: auto !important; - Removed to fix narrow header */
     max-width: 100%;
     overflow-x: clip;
     overflow-y: visible;
@@ -438,6 +437,7 @@ a.wiki-header-link {
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     white-space: normal;
@@ -529,43 +529,26 @@ a.wiki-header-link::before {
 /* 
    Mobile / Responsive Overlay 
 */
-@media (max-width: 768px) {
+/* 
+   Mobile / Responsive Overlay 
+   Redmine mobile breakpoint is approx 900px
+*/
+@media (max-width: 899px) {
     body.has-mini-wiki-sidebar #wrapper {
         display: block !important;
         /* Reset Grid */
+        grid-template-columns: 1fr !important;
+        grid-template-areas: "top" "header" "main" "footer" !important;
     }
 
-    #mini-wiki-sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 9999;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    body.mini-wiki-sidebar-closed #mini-wiki-sidebar {
-        width: 0 !important;
-        padding: 0 !important;
-        border: none;
-    }
-
-    /* Mobile Toggle Button */
-    .mini-wiki-sidebar-toggle {
-        font-size: 1.5rem;
-        padding: 10px;
-    }
-
+    /* Completely hide sidebar and toggle on mobile */
+    #mini-wiki-sidebar,
+    .mini-wiki-sidebar-toggle,
     body.mini-wiki-sidebar-closed .mini-wiki-sidebar-toggle {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 10000;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 }
 
