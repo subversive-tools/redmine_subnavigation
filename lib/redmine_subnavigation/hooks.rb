@@ -14,7 +14,7 @@ module RedmineSubnavigation
 
     def view_layouts_base_body_top(context = {})
       # 1. Global UI Features (Sticky Menu) - Better here than bottom for early layout
-      settings = Setting.plugin_redmine_subnavigation
+      settings = Setting.plugin_redmine_subnavigation || {}
       output = []
       
       if settings['sticky_top_menu']
@@ -59,7 +59,7 @@ module RedmineSubnavigation
     end
 
     def view_layouts_base_body_bottom(context = {})
-      settings = Setting.plugin_redmine_subnavigation
+      settings = Setting.plugin_redmine_subnavigation || {}
       
       # Determine if we should render
       return '' unless should_render_sidebar?(context, settings)
@@ -138,7 +138,7 @@ module RedmineSubnavigation
         render_sidebar_navigation(project, mode)
       end
       
-      return '' if sidebar_content.empty?
+      return '' if sidebar_content.blank?
 
       # JS initialization is now handled up top or via wiki_sidebar.js
       # We just output the structure

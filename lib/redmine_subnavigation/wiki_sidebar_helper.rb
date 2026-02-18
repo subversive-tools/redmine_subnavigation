@@ -15,7 +15,7 @@ module RedmineSubnavigation
 
     # Renders the wiki page tree for a single project
     def render_wiki_sidebar_tree(project)
-      return '' unless project.wiki
+      return '' unless project && project.wiki
 
       pages = project.wiki.pages.includes(:content).order(:title).to_a
       return '' if pages.empty?
@@ -154,8 +154,8 @@ module RedmineSubnavigation
       return '' unless page.content
       
       text = page.content.text
-      max_depth = (Setting.plugin_redmine_subnavigation['header_max_depth'] || 3).to_i
-      return '' if max_depth == 0
+      settings = Setting.plugin_redmine_subnavigation || {}
+      max_depth = (settings['header_max_depth'] || 3).to_i
       
       # Extract Headers
       headers = []
