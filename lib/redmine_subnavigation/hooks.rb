@@ -77,20 +77,21 @@ module RedmineSubnavigation
           
           # Projects: Count (detects adds/removes) AND Max Update (detects edits)
           project_query = Project.where(id: tree_project_ids)
-          project_sig = "#{project_query.count}-#{project_query.maximum(:updated_on).to_i}"
+          project_sig = "#{project_query.count}-#{project_query.maximum(:updated_on).to_f}"
           
           begin
             wiki_pages_query = WikiPage.joins(wiki: :project).where(projects: { id: tree_project_ids })
-            max_p_up = wiki_pages_query.maximum(:updated_on).to_i
             p_count = wiki_pages_query.count
             
             # Content updates
             max_c_up = WikiContent.joins(page: { wiki: :project })
                                   .where(projects: { id: tree_project_ids })
-                                  .maximum('wiki_contents.updated_on').to_i
+                                  .maximum('wiki_contents.updated_on').to_f
                                   
-            wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
+            wiki_sig = "#{p_count}-#{max_c_up}"
+
           rescue => e
+
             wiki_sig = "0-0-0"
           end
           
@@ -98,19 +99,22 @@ module RedmineSubnavigation
           cache_identifier = "root/#{root_project.id}"
         else
           # In 'wiki' mode
-          project_sig = "#{project.updated_on.to_i}"
+          project_sig = "#{project.updated_on.to_f}"
           
           begin
-            if project.wiki
+            if project && project.wiki
                pages = project.wiki.pages
                p_count = pages.count
-               max_p_up = pages.maximum(:updated_on).to_i
-               max_c_up = WikiContent.where(page_id: pages.select(:id)).maximum(:updated_on).to_i
-               wiki_sig = "#{p_count}-#{max_p_up}-#{max_c_up}"
+               # WikiPage does not have updated_on, rely on content updates + count
+               max_c_up = WikiContent.where(page_id: pages.select(:id)).maximum('wiki_contents.updated_on').to_f
+               wiki_sig = "#{p_count}-#{max_c_up}"
+
             else
+
                wiki_sig = "0-0-0"
             end
           rescue => e
+
             wiki_sig = "0-0-0"
           end
           
@@ -120,7 +124,7 @@ module RedmineSubnavigation
       else
         # Global Context
         visible_projects = Project.visible
-        tree_version = "#{visible_projects.count}-#{visible_projects.maximum(:updated_on).to_i}"
+        tree_version = "#{visible_projects.count}-#{visible_projects.maximum(:updated_on).to_f}"
         cache_identifier = "global"
       end
 
@@ -133,8 +137,11 @@ module RedmineSubnavigation
         mode,
         settings['header_max_depth']
       ].join('/')
+      
+
 
       sidebar_content = Rails.cache.fetch(cache_key, expires_in: 10.minutes) do
+
         render_sidebar_navigation(project, mode)
       end
       
