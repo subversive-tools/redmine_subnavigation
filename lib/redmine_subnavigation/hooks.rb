@@ -182,7 +182,8 @@ module RedmineSubnavigation
 
             # Check if page is new/empty to avoid empty sidebar gap
             page = context[:controller].instance_variable_get(:@page)
-            return false if page && (page.new_record? || page.content.nil?)
+            # Fix: Also return false if page is nil (e.g. Wiki Index page)
+            return false if page.nil? || page.new_record? || page.content.nil?
 
             return project.module_enabled?(:wiki) && User.current.allowed_to?(:view_subnavigation, project)
           else
