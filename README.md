@@ -22,6 +22,14 @@ Transform your Redmine experience with a clean, hierarchical view of your Projec
 - **Modern Design**: Clean CSS using CSS variables, integrating seamlessly with modern Redmine themes (Light & Dark mode support).
 - **Localized**: Available in English and German.
 
+
+## Screenshots
+
+<img width="892" height="410" alt="sub1" src="https://github.com/user-attachments/assets/33636745-df1b-4fb2-b3bd-e9f01909e9bc" />
+<img width="818" height="435" alt="sub2" src="https://github.com/user-attachments/assets/5398afc3-c606-4f07-b17f-5d03adf5ddbc" />
+<img width="961" height="340" alt="sub3" src="https://github.com/user-attachments/assets/d5d28a73-c7ef-472d-ac30-285fe8ac11f5" />
+
+
 ## Installation
 
 > [!IMPORTANT]
