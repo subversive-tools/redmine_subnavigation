@@ -1,5 +1,8 @@
 # Release Notes
 
+## v0.5.5
+- **Fix:** Prevented the sidebar from rendering for new, unsaved projects. This resolves issues in the project creation workflow.
+
 ## v0.5.4
 - **SVG Icons:** Replaced text emojis with native-style SVG icons for Projects and Wiki pages, significantly improving the visual consistency with Redmine's administration menu.
 - **Bug Fixes:**

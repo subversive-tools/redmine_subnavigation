@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_subnavigation do
   name 'Redmine Subnavigation'
   author 'Simon Mischke'
   description 'This plugin adds a subnavigation sidebar to the project page'
-  version '0.5.4'
+  version '0.5.5'
   url 'https://github.com/simonmischke/redmine_subnavigation'
   author_url 'https://github.com/simonmischke'
 
