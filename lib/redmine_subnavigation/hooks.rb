@@ -173,6 +173,8 @@ module RedmineSubnavigation
       project = context[:project]
       
       if project
+        return false if project.new_record?
+        
         # Project Context
         if project.module_enabled?(:subnavigation)
           if mode == 'wiki'
