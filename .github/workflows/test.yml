@@ -1,49 +1,85 @@
-name: Redmine Plugin Tests
+name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   test:
+    name: "Redmine ${{ matrix.redmine }} / Ruby ${{ matrix.ruby }}"
     runs-on: ubuntu-latest
-    name: Redmine ${{ matrix.redmine-version }} / Ruby ${{ matrix.ruby-version }}
+
     strategy:
+      fail-fast: false
       matrix:
-        ruby-version: ['3.1', '3.2', '3.3']
-        redmine-version: ['5.0-stable', '5.1-stable', 'master']
+        include:
+          - redmine: "5.1-stable"
+            ruby: "3.1"
+          - redmine: "6.0-stable"
+            ruby: "3.2"
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: redmine_test
+          POSTGRES_USER: redmine
+          POSTGRES_PASSWORD: redmine
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      RAILS_ENV: test
+      BUNDLE_WITH: postgresql
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        path: redmine_subnavigation
+      - name: Checkout plugin
+        uses: actions/checkout@v4
+        with:
+          path: plugin_src
 
-    - name: Clone Redmine
-      run: |
-        git clone --depth=1 --branch ${{ matrix.redmine-version }} https://github.com/redmine/redmine.git redmine
+      - name: Checkout Redmine ${{ matrix.redmine }}
+        uses: actions/checkout@v4
+        with:
+          repository: redmine/redmine
+          ref: ${{ matrix.redmine }}
+          path: redmine
 
-    - name: Install Plugin
-      run: |
-        mv redmine_subnavigation redmine/plugins/
+      - name: Move plugin into Redmine
+        run: mv plugin_src redmine/plugins/redmine_subnavigation
 
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
+      - name: Setup Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          working-directory: redmine
+          bundler-cache: true
+
+      - name: Configure test database
+        run: |
+          cat > redmine/config/database.yml << 'EOF'
+          test:
+            adapter: postgresql
+            host: localhost
+            port: 5432
+            database: redmine_test
+            username: redmine
+            password: redmine
+            encoding: utf8
+          EOF
+
+      - name: Migrate Redmine & plugin
         working-directory: redmine
+        run: |
+          bundle exec rake db:migrate
+          bundle exec rake redmine:plugins:migrate NAME=redmine_subnavigation
 
-    - name: Install Dependencies
-      working-directory: redmine
-      run: |
-        bundle config set --local without 'postgresql mysql rmagick'
-        bundle install
-        
-        # Create database.yml (SQLite for testing)
-        echo "test:
-          adapter: sqlite3
-          database: db/test.sqlite3" > config/database.yml
-
-    - name: Run Tests
-      working-directory: redmine
-      run: |
-        bundle exec rake db:migrate RAILS_ENV=test
-        bundle exec rake redmine:plugins:migrate RAILS_ENV=test
-        bundle exec rake redmine:plugins:test NAME=redmine_subnavigation RAILS_ENV=test
+      - name: Run plugin tests
+        working-directory: redmine
+        run: bundle exec rake test:plugins NAME=redmine_subnavigation
