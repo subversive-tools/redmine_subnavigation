@@ -1,98 +1,85 @@
 # Redmine Subnavigation Plugin
 
 ![Version](https://img.shields.io/badge/version-0.5.4-blue.svg)
-![Redmine](https://img.shields.io/badge/redmine-5.0%20%7C%206.0-red.svg?style=flat-square&logo=redmine)
-![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)
+![Redmine](https://img.shields.io/badge/Redmine-5.0%20%7C%206.0-red.svg?logo=redmine)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-**A powerful, collapsible sidebar navigation tree for Redmine.**
+A Redmine plugin that adds a collapsible sidebar with a hierarchical navigation tree for projects, wiki pages, and headings — keeping the full structure visible without losing your place.
 
-Transform your Redmine experience with a clean, hierarchical view of your Projects, Wiki pages, and Wiki Headings. Designed for productivity and ease of use.
-
-## Features
-
-- **Project Hierarchy**: Navigate smoothly through projects and subprojects.
-- **Wiki Tree**: Visual tree structure for all wiki pages with expand/collapse functionality.
-- **Wiki Headings**: Automatic Table of Contents (h1, h2, etc.) for the current page.
-- **Collapsible Sidebar**: Toggle the sidebar to maximize your workspace.
-- **Smart State Persistence**: Remembers your sidebar width and expanded/collapsed state between page loads.
-- **Recursive Expansion**: Hold `Alt` / `Option` and click a triangle to expand/collapse all nested items at once.
-- **Hide Breadcrumbs**: Optional setting to hide the Redmine breadcrumb trail for a cleaner look (Full Hierarchy mode only).
-- **Sticky Top Menu**: Optional setting to keep the main Redmine menu fixed at the top while scrolling.
-- **Cascading Activation**: Automatically enables/disables the subnavigation module in subprojects when changed in a parent project (in 'Full Hierarchy' mode).
-- **Modern Design**: Clean CSS using CSS variables, integrating seamlessly with modern Redmine themes (Light & Dark mode support).
-- **Localized**: Available in English and German.
-
+> Built for documentation-heavy teams who need context at a glance without switching pages.
 
 ## Screenshots
 
-<img width="892" height="410" alt="sub1" src="https://github.com/user-attachments/assets/33636745-df1b-4fb2-b3bd-e9f01909e9bc" />
-<img width="818" height="435" alt="sub2" src="https://github.com/user-attachments/assets/5398afc3-c606-4f07-b17f-5d03adf5ddbc" />
-<img width="961" height="340" alt="sub3" src="https://github.com/user-attachments/assets/d5d28a73-c7ef-472d-ac30-285fe8ac11f5" />
+<img alt="Collapsible sidebar showing project and wiki tree" src=".github/images/sidebar-navigation.png" />
+<img alt="Wiki page tree with expand and collapse" src=".github/images/wiki-tree.png" />
+<img alt="Automatic table of contents from page headings" src=".github/images/headings-toc.png" />
 
+## Features
+
+- **Project hierarchy**: navigate smoothly through projects and subprojects
+- **Wiki tree**: visual tree of all wiki pages with expand/collapse
+- **Headings TOC**: automatic table of contents (h1, h2, …) for the current page
+- **Collapsible sidebar**: toggle to maximise workspace, state persists across page loads
+- **Recursive expansion**: hold `Alt`/`Option` and click a triangle to expand or collapse all nested items at once
+- **Cascading activation**: enabling or disabling the module in a parent project automatically applies to all subprojects (Full Hierarchy mode)
+- **Optional breadcrumb hiding**: cleaner header without the default Redmine breadcrumb trail
+- **Sticky top menu**: keep the main Redmine menu fixed while scrolling
+- **Light & dark mode**: integrates with modern Redmine themes via CSS variables
+- **Localised**: English and German included
+
+## Requirements
+
+- Redmine 5.0 or higher
 
 ## Installation
 
 > [!IMPORTANT]
 > The plugin directory **MUST** be named `redmine_subnavigation` for assets to load correctly.
 
-1.  **Clone the repository** into your plugins directory:
-    ```bash
-    cd /path/to/redmine/plugins
-    git clone https://github.com/modoq/redmine_subnavigation.git redmine_subnavigation
-    ```
+1. **Clone** into your plugins directory:
+   ```bash
+   cd /path/to/redmine/plugins
+   git clone https://github.com/subversive-tools/redmine_subnavigation.git redmine_subnavigation
+   ```
 
-2.  **Install dependencies & assets**:
-    ```bash
-    bundle install
-    bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-    ```
+2. **Run migrations**:
+   ```bash
+   bundle exec rake redmine:plugins:migrate RAILS_ENV=production
+   ```
 
-3.  **Restart Redmine**.
+3. **Restart Redmine**.
 
 ## Configuration
 
-Navigate to **Administration > Plugins > Redmine Subnavigation > Configure**.
-
-### Permissions
-
-To control who can see the sidebar, use the Redmine **Roles and permissions** settings:
-
-1.  Go to **Administration > Roles and permissions**.
-2.  Select a role (e.g., **Reporter**, **Non member**, or **Anonymous**).
-3.  Check the box for **View subnavigation** under the **Subnavigation** project module.
-4.  Save.
-
-> [!NOTE]
-> To enable the sidebar for users who are **not logged in**, you must check the permission for the **Anonymous** role. The **Non member** role only applies to logged-in users who are not members of the current project.
-
-### General Settings
+Navigate to **Administration > Plugins > Subnavigation > Configure**.
 
 | Option | Description |
 |:---|:---|
-| **Sidebar Mode** | |
-| *Disabled* | Plugin is inactive. |
-| *Wiki & Headings* | Sidebar shows Wiki pages and headings for the current project only. **Best for large instances.** |
-| *Full Hierarchy* | Sidebar shows the complete Project tree, Wiki pages, and headings. **Enables cascading module activation.** |
-| **Max Headings Depth** | Maximum depth of headings (h1, h2, h3, etc.) to show in the automatic Table of Contents. |
-| **Hide Breadcrumb** | Hides the default Redmine breadcrumb trail (e.g., `Project > Wiki > Page`) for a cleaner header. *Only active in 'Full Hierarchy' mode.* |
-| **Sticky Top Menu** | Fixes the black top menu bar to the top of the screen when scrolling. |
+| **Sidebar mode** | `Disabled` · `Wiki & Headings` (current project only, best for large instances) · `Full Hierarchy` (complete project tree) |
+| **Max headings depth** | Deepest heading level shown in the automatic TOC |
+| **Hide breadcrumb** | Hides the default Redmine breadcrumb trail (Full Hierarchy mode only) |
+| **Sticky top menu** | Fixes the top menu bar when scrolling |
+
+### Permissions
+
+Go to **Administration > Roles and permissions** and enable *View subnavigation* for each role that should see the sidebar.
 
 > [!NOTE]
-> **Cascading Activation**: When "Full Hierarchy" (`project_wiki`) mode is enabled, enabling or disabling the **Subnavigation** module in a project's settings will automatically apply the same change to all its subprojects.
+> To show the sidebar to users who are not logged in, enable the permission for the **Anonymous** role. The **Non member** role applies only to logged-in users who are not project members.
 
 > [!TIP]
-> **Power User Shortcut**: Hold **Alt / Option** while clicking an expand triangle to recursively expand or collapse all children.
+> Hold **Alt / Option** while clicking an expand triangle to recursively expand or collapse all children at once.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a Pull Request.
+Contributions are welcome — please fork the repository and open a Pull Request.
 
-1.  Fork it
-2.  Create your feature branch (`git checkout -b feature/my-new-feature`)
-3.  Commit your changes (`git commit -am 'Add some feature'`)
-4.  Push to the branch (`git push origin feature/my-new-feature`)
-5.  Create a new Pull Request
+1. Fork it
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
 ## License
 
-This plugin is open source software licensed under the [MIT license](LICENSE).
+[MIT License](LICENSE) — Copyright (c) 2026 Stefan Mischke
