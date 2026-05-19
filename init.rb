@@ -1,10 +1,10 @@
 Redmine::Plugin.register :redmine_subnavigation do
-  name 'Redmine Subnavigation'
-  author 'Simon Mischke'
+  name 'Subnavigation'
+  author 'Stefan Mischke'
   description 'This plugin adds a subnavigation sidebar to the project page'
-  version '0.5.5'
-  url 'https://github.com/simonmischke/redmine_subnavigation'
-  author_url 'https://github.com/simonmischke'
+  version '0.5.6'
+  url 'https://github.com/subversive-tools/redmine_subnavigation'
+  author_url 'https://github.com/modoq'
 
   settings default: {
     'sidebar_mode' => 'wiki', # 'none', 'wiki', 'project_wiki'

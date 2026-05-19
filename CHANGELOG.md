@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.6] - 2026-05-19
+
+### Changed
+- Plugin name: `Redmine Subnavigation` → `Subnavigation`.
+- Author corrected to Stefan Mischke; URL moved to `subversive-tools` organisation.
+
 ## [0.5.5] - 2026-03-13
 
 ### Fixed
