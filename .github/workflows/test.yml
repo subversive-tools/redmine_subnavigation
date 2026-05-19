@@ -58,10 +58,8 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           working-directory: redmine
-
-      - name: Install gems with PostgreSQL support
-        working-directory: redmine
-        run: bundle install --with postgresql
+          bundler-cache: true
+          bundle-without: "development"
 
       - name: Configure test database
         run: |
