@@ -5,7 +5,6 @@ class WikiSidebarHelperTest < ActiveSupport::TestCase
   include RedmineSubnavigation::WikiSidebarHelper
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TagHelper
-  include Rails.application.routes.url_helpers
 
   def setup
     # Save project without any enabled_modules to avoid EnabledModule validation
