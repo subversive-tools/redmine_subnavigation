@@ -36,7 +36,6 @@ jobs:
 
     env:
       RAILS_ENV: test
-      BUNDLE_WITH: postgresql
 
     steps:
       - name: Checkout plugin
@@ -59,7 +58,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           working-directory: redmine
-          bundler-cache: true
+
+      - name: Install gems with PostgreSQL support
+        working-directory: redmine
+        run: bundle install --with postgresql
 
       - name: Configure test database
         run: |
@@ -83,3 +85,4 @@ jobs:
       - name: Run plugin tests
         working-directory: redmine
         run: bundle exec rake test:plugins NAME=redmine_subnavigation
+
